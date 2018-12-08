@@ -132,11 +132,27 @@ class DataBase:
         # 返回这次建立的gid
         return last_gid
 
+    def create_room(self, auth):
+        if self.check_auth(auth) is False:
+            return "Error. Auth Error."
+
+        gid = self.room_init()
+        # 让本人加群
+        conn = self.room_conn_get(gid)
+        cursor = conn.cursor()
+        username = self.auth2username(auth)
+        cursor.execute("INSERT INTO members (username) VALUES (?)", (username, ))
+        cursor.close()
+        self.room_conn_finish(conn)
+
+        # 返回房间号码
+        return gid
+
     # 默认：password为空，name和email默认
     def create_user(self, username='Lance', password='', name='Nickname',
                     email='lanceliang2018@163.com'):
         if self.check_in("users", "username", username):
-            return "User Exist."
+            return "Error. User Exist."
 
         cursor = self.cursor_get()
         last_uid = self.get_last_uid()
@@ -166,7 +182,7 @@ class DataBase:
 
     def user_get_head(self, username):
         if self.check_in("users", "username", username) is False:
-            return ''
+            return 'Error. '
         cursor = self.cursor_get()
         cursor.execute("SELECT head FROM users WHERE username = ?", (username, ))
         head = cursor.fetchall()[0][0]
@@ -177,7 +193,7 @@ class DataBase:
     def create_auth(self, username, password):
         cursor = self.cursor_get()
         if not self.user_check(username, password):
-            return "Password Error."
+            return "Error. Password Error."
         string = "%s %s %s" % (username, self.secret, str(time.time()))
         auth = hashlib.md5(string.encode()).hexdigest()
 
@@ -206,14 +222,27 @@ class DataBase:
 
     def send_message(self, auth, gid, text, message_type='text'):
         if self.check_auth(auth) is False:
-            return 'Auth Error.'
+            return 'Error. Auth Error.'
+        # 检验是否在房间内
         username = self.auth2username(auth)
+        conn = self.room_conn_get(gid)
+        if conn is None:
+            return 'Error. Room number Error.'
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM members WHERE username = ?", (username, ))
+        data = cursor.fetchall()
+        cursor.close()
+        self.room_conn_finish(conn)
+
+        if len(data) == 0:
+            return "Error. You are not in this group."
+
         head = self.user_get_head(username)
         last_mid = self.room_update_last_mid(gid)
 
         conn = self.room_conn_get(gid)
         if conn is None:
-            return 'Room number Error.'
+            return 'Error. Room number Error.'
         cursor = conn.cursor()
         cursor.execute("INSERT INTO message (mid, username, head, type, text) VALUES (?, ?, ?, ?, ?)",
                        (last_mid, username, head, message_type, text))
@@ -224,10 +253,10 @@ class DataBase:
     # 返回格式：(username, head, type, text)(json)
     def get_message(self, auth, gid, limit=30):
         if self.check_auth(auth) is False:
-            return 'Auth Error.'
+            return 'Error. Auth Error.'
         conn = self.room_conn_get(gid)
         if conn is None:
-            return 'Room number Error.'
+            return 'Error. Room number Error.'
         cursor = conn.cursor()
         result = []
         unit_ = {}
