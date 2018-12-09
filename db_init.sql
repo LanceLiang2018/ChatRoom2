@@ -14,6 +14,12 @@ CREATE TABLE users (
     status INT
 );
 
+---- 用户与加入的房间号码
+--CREATE TABLE rooms (
+--    username VARCHAR(512),
+--    gid INT
+--);
+
 -- 维护用表
 CREATE TABLE maintain (
     -- 最新一个用户id和群组id，消息id。

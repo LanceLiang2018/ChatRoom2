@@ -16,6 +16,8 @@ CREATE TABLE message (
 CREATE TABLE info (
     -- Group id
     gid INT,
+    -- Group name
+    name VARCHAR(512),
     -- message id
     last_mid INT,
     -- 创建时间（GMT）varchar
@@ -32,6 +34,6 @@ CREATE TABLE members (
     username VARCHAR(256)
 );
 
-INSERT INTO info (gid, last_mid, create_time, member_number, last_post_time) VALUES (0, 1, "", 0, "");
+INSERT INTO info (gid, name, last_mid, create_time, member_number, last_post_time) VALUES (0, "New group", 1, "", 0, "");
 INSERT INTO message (uid, username, head, type, text) VALUES
     (0, "Administrator", "https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s=512", "text", "欢迎加入本群组！");

@@ -60,10 +60,45 @@ def signup():
         return "Error %s" % str(e)
     return str(db.create_user(username, password, name, email))
 
+
 @app.route('/beat', methods=["POST"])
 def beat():
+    form = request.form
+    try:
+        auth = form['auth']
+    except Exception as e:
+        return "Error. " + str(e)
+    if db.check_auth(auth) is False:
+        return "Error. Auth Error."
     return 'Success'
 
+
+@app.route('/create_room', methods=["PUSH"])
+def create_room():
+    form = request.form
+    try:
+        auth = form['auth']
+        name = 'New group'
+        if 'name' in form:
+            name = form['name']
+    except Exception as e:
+        return "Error. " + str(e)
+    if db.check_auth(auth) is False:
+        return "Error. Auth Error."
+    gid = db.create_room(auth, name)
+    return 'Success. gid = %d' % gid
+
+
+@app.route('/join_in', methods=["POST"])
+def join_in():
+    form = request.form
+    try:
+        auth = form['auth']
+        gid = int(form['gid'])
+    except Exception as e:
+        return "Error. " + str(e)
+    res = db.room_join_in(auth, gid)
+    return res
 
 if __name__ == '__main__':
     app.run("0.0.0.0", port=8080, debug=True)
