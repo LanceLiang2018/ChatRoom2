@@ -60,6 +60,10 @@ def signup():
         return "Error %s" % str(e)
     return str(db.create_user(username, password, name, email))
 
+@app.route('/beat', methods=["POST"])
+def beat():
+    return 'Success'
+
 
 if __name__ == '__main__':
     app.run("0.0.0.0", port=8080, debug=True)
