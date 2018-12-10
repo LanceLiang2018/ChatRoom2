@@ -8,12 +8,19 @@ app = Flask(__name__)
 db = DataBase()
 
 
+def as_json(func):
+    def inner(*args, **kwargs):
+        return json.dumps(func(*args, **kwargs))
+    return inner
+
+
 @app.route('/', methods=["GET"])
 def index():
     return "This is a server for Chat Room 2."
 
 
 @app.route('/get_message', methods=["POST"])
+@as_json
 def get_message():
     form = request.form
     try:
@@ -26,7 +33,7 @@ def get_message():
         return "Error %s" % str(e)
     # au = db.create_auth("Lance", "")
     data = db.get_message(auth, gid, limit=limit)
-    return json.dumps(data)
+    return data
 
 
 @app.route('/login', methods=["POST"])
@@ -70,10 +77,11 @@ def beat():
     except Exception as e:
         return "Error. " + str(e)
     if db.check_auth(auth) is False:
-        return "Error. Auth Error."
-    return 'Success'
+        return db.error["Error"]
+    return db.success
 
 
+@as_json
 @app.route('/create_room', methods=["PUSH"])
 def create_room():
     form = request.form
@@ -85,9 +93,24 @@ def create_room():
     except Exception as e:
         return "Error. " + str(e)
     if db.check_auth(auth) is False:
-        return "Error. Auth Error."
+        return db.error["Auth"]
     gid = db.create_room(auth, name)
-    return 'Success. gid = %d' % gid
+    return {'result': db.success, 'gid': gid}
+
+
+@app.route('/set_room_info', methods=["POST"])
+def set_room_info():
+    form = request.form
+    try:
+        auth = form['auth']
+        gid = int(form['gid'])
+        name = 'New group'
+        if 'name' in form:
+            name = form['name']
+    except Exception as e:
+        return "Error. " + str(e)
+    res = db.room_set_info(auth, gid, name)
+    return res
 
 
 @app.route('/join_in', methods=["POST"])
@@ -99,6 +122,31 @@ def join_in():
     except Exception as e:
         return "Error. " + str(e)
     res = db.room_join_in(auth, gid)
+    return res
+
+
+@as_json
+@app.route('/get_room_info', methods=["POST"])
+def get_room_info():
+    form = request.form
+    try:
+        auth = form['auth']
+        gid = int(form['gid'])
+    except Exception as e:
+        return "Error. " + str(e)
+    res = db.room_get_info(auth, gid)
+    return res
+
+
+@as_json
+@app.route('/get_room_all', methods=["POST"])
+def get_room_all():
+    form = request.form
+    try:
+        auth = form['auth']
+    except Exception as e:
+        return "Error. " + str(e)
+    res = db.room_get_all(auth)
     return res
 
 

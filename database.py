@@ -15,6 +15,19 @@ class DataBase:
         self.file_room_init = "room_init.sql"
         self.dir_data = "data/"
         self.secret = "This program is owned by Lance."
+
+        self.error_preview = "Error."
+        self.error = {
+            "Error": "%s" % self.error_preview,
+            "Auth": "%s Auth Error." % self.error_preview,
+            "RoomNumber": "%s Room Error. Room number error." % self.error_preview,
+            "NotIn": "%s Room Error. You are not in this group." % self.error_preview,
+            "NoUser": "%s No such of user." % self.error_preview,
+            "UserExist": "%s User exists." % self.error_preview,
+            "Password": "%s Password Error." % self.error_preview,
+        }
+        self.success = 'Success.'
+
         self.conn = sql.connect('database.db', check_same_thread=False)
 
     def cursor_get(self):
@@ -42,10 +55,11 @@ class DataBase:
     def update_last_uid(self):
         cursor = self.cursor_get()
         last_uid = self.get_last_uid()
-        # 更新last_gid
+        # 更新last_uid
         last_uid = last_uid + 1
         cursor.execute("UPDATE maintain SET last_uid = ? WHERE flag = FLAG", (last_uid, ))
         self.cursor_finish(cursor)
+        return last_uid
 
     def update_last_gid(self):
         cursor = self.cursor_get()
@@ -54,6 +68,7 @@ class DataBase:
         last_gid = last_gid + 1
         cursor.execute("UPDATE maintain SET last_gid = ? WHERE flag = FLAG", (last_gid, ))
         self.cursor_finish(cursor)
+        return last_gid
 
     def check_in(self, table, line, value):
         cursor = self.cursor_get()
@@ -106,9 +121,18 @@ class DataBase:
         self.room_conn_finish(conn)
         return last_mid
 
+    def room_update_number(self, gid):
+        conn = self.room_conn_get(gid)
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM members")
+        member_number = len(cursor.fetchall()[0])
+        cursor.execute("UPDATE info SET member_number = ? WHERE flag = ?", (member_number, "FLAG"))
+        self.room_conn_finish(conn)
+        # return None
+
     def room_init(self):
         cursor = self.cursor_get()
-        last_gid = self.get_last_uid()
+        last_gid = self.update_last_gid()
 
         path = "%s%d" % (self.dir_data, last_gid)
         filename = "%s/room.db" % path
@@ -135,7 +159,7 @@ class DataBase:
     # 返回值：创建的房间号。房间号自动递增
     def create_room(self, auth, name='New group'):
         if self.check_auth(auth) is False:
-            return "Error. Auth Error."
+            return self.error["Auth"]
 
         gid = self.room_init()
         # 让本人加群
@@ -150,9 +174,11 @@ class DataBase:
         # 设置本群基本信息
         conn = self.room_conn_get(gid)
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO info (name, create_time, last_post_time) VALUES'
-                       ' (?, ?)', (name, time.asctime(), time.asctime()))
+        cursor.execute('INSERT INTO info (name, create_time, last_post_time) VALUES '
+                       '(?, ?, ?)', (name, time.asctime(), time.asctime()))
         self.room_conn_finish(conn)
+
+        self.room_update_active_time(gid)
 
         # 返回房间号码
         return gid
@@ -160,32 +186,75 @@ class DataBase:
     def room_join_in(self, auth, gid):
         # 检查房间存在
         if self.room_check_exist(gid) is False:
-            return 'Error. The room is not exist.'
+            return self.error["RoomNumber"]
         conn = self.room_conn_get(gid)
         cursor = conn.cursor()
         username = self.auth2username(auth)
         cursor.execute("INSERT INTO members (username) VALUES (?)", (username,))
         cursor.close()
         self.room_conn_finish(conn)
-        return 'Success'
+        self.room_update_number(gid)
+        return self.success
+
+    # 设置房间基本信息
+    def room_set_info(self, auth, gid, name):
+        if self.check_auth(auth) is False:
+            return self.error["Auth"]
+        if self.room_check_exist(gid) is False:
+            return self.error["RoomNumber"]
+        conn = self.room_conn_get(gid)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE info SET name = ? WHERE flag = ?", (name, "FLAG"))
+        cursor.close()
+        self.room_conn_finish(conn)
+        return self.success
+
+    # 房间号→Name
+    def number2name(self, gid):
+        conn = self.room_conn_get(gid)
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM info WHERE flag = ?", ("FLAG", ))
+        name = cursor.fetchall()[0][0]
+        cursor.close()
+        self.room_conn_finish(conn)
+        return name
+
+    # 获取房间信息
+    def room_get_info(self, auth, gid):
+        if self.check_auth(auth) is False:
+            return self.error["Auth"]
+        conn = self.room_conn_get(gid)
+        cursor = conn.cursor()
+        cursor.execute("SELECT gid, name, create_time, member_number, last_post_time "
+                       "FROM info WHERE flag = ?", ("FLAG", ))
+        data = cursor.fetchall()[0]
+        cursor.close()
+
+        info = {
+            'gid': data[0], 'name': data[1], 'create_time': data[2],
+            'member_number': data[3], 'last_post_time': data[4]
+        }
+        self.room_conn_finish(conn)
+        return info
 
     # 默认：password为空，name和email默认
     def create_user(self, username='Lance', password='', name='Nickname',
                     email='lanceliang2018@163.com'):
         if self.check_in("users", "username", username):
-            return "Error. User Exist."
+            return self.error["UserExist"]
 
         cursor = self.cursor_get()
-        last_uid = self.get_last_uid()
+        last_uid = self.update_last_uid()
 
         password = hashlib.md5(password.encode()).hexdigest()
+        email = email.lower()
         head = get_head(email)
-        cursor.execute("INSERT INTO users (username, password, name, email, head) VALUES (?, ?, ?, ?, ?)",
-                       (username, password, name, email, head))
+        cursor.execute("INSERT INTO users (uid, username, password, name, email, head) VALUES (?, ?, ?, ?, ?, ?)",
+                       (last_uid, username, password, name, email, head))
 
         self.update_last_uid()
         self.cursor_finish(cursor)
-        return "Success"
+        return self.success
 
     # 检查密码是否符合
     def user_check(self, username, password):
@@ -203,7 +272,7 @@ class DataBase:
 
     def user_get_head(self, username):
         if self.check_in("users", "username", username) is False:
-            return 'Error. '
+            return self.error["NoUser"]
         cursor = self.cursor_get()
         cursor.execute("SELECT head FROM users WHERE username = ?", (username, ))
         head = cursor.fetchall()[0][0]
@@ -214,7 +283,7 @@ class DataBase:
     def create_auth(self, username, password):
         cursor = self.cursor_get()
         if not self.user_check(username, password):
-            return "Error. Password Error."
+            return self.error["Password"]
         string = "%s %s %s" % (username, self.secret, str(time.time()))
         auth = hashlib.md5(string.encode()).hexdigest()
 
@@ -234,7 +303,7 @@ class DataBase:
 
     def auth2username(self, auth):
         if self.check_auth(auth) is False:
-            return ''
+            return 'No_User'
         cursor = self.cursor_get()
         cursor.execute("SELECT username FROM auth WHERE auth = ?", (auth, ))
         username = cursor.fetchall()[0][0]
@@ -262,12 +331,31 @@ class DataBase:
             return False
         return True
 
+    def room_get_all(self, auth):
+        if self.check_auth(auth) is False:
+            return self.error["Auth"]
+        # 列出所有room
+        li = os.listdir('./data/')
+        li = list(map(lambda x: int(x), li))
+        names = list(map(self.number2name, li))
+        result = []
+        for i in range(len(li)):
+            result.append({"name": names[i], "gid": li[i]})
+        return result
+
+    def room_update_active_time(self, gid):
+        conn = self.room_conn_get(gid)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE info SET last_post_time = ? WHERE flag = ?", (time.asctime(), "FLAG"))
+        self.room_conn_finish(conn)
+
     def send_message(self, auth, gid, text, message_type='text'):
         if self.check_auth(auth) is False:
-            return 'Error. Auth Error.'
-
+            return self.error["Auth"]
+        if self.room_check_exist(gid) is False:
+            return self.error["RoomNumber"]
         if self.room_check_in(auth, gid) is False:
-            return 'Error. You are not in this group.'
+            return self.error["NotIn"]
 
         username = self.auth2username(auth)
 
@@ -275,22 +363,27 @@ class DataBase:
         last_mid = self.room_update_last_mid(gid)
 
         if self.room_check_exist(gid) is False:
-            return 'Error. Room number Error.'
+            return self.error["RoomNumber"]
         conn = self.room_conn_get(gid)
         cursor = conn.cursor()
         cursor.execute("INSERT INTO message (mid, username, head, type, text) VALUES (?, ?, ?, ?, ?)",
                        (last_mid, username, head, message_type, text))
         cursor.close()
         self.room_conn_finish(conn)
-        return "Success"
+
+        self.room_update_active_time(gid)
+        return self.success
 
     # 返回格式：(username, head, type, text)(json)
     def get_message(self, auth, gid, limit=30):
         if self.check_auth(auth) is False:
-            return 'Error. Auth Error.'
+            return self.error["Auth"]
+        if self.room_check_exist(gid) is False:
+            return self.error["RoomNumber"]
+        if self.room_check_in(auth, gid) is False:
+            return self.error["NotIn"]
+
         conn = self.room_conn_get(gid)
-        if conn is None:
-            return 'Error. Room number Error.'
         cursor = conn.cursor()
         result = []
         unit_ = {}
@@ -310,22 +403,33 @@ class DataBase:
 if __name__ == '__main__':
     db = DataBase()
 
-    db.db_init()
-    db.room_init()
-    print(db.create_user("Lance", "1352040930lxr"))
-
+    # db.db_init()
+    db.create_user("Lance", "1352040930lxr")
+    db.create_user("Lance2", "1352040930lxr")
     # print(db.check_in("users", "username", "Lance"))
 
-    au = db.create_auth("Lance", "1352040930lxr")
-    print(db.check_auth(au))
+    _au = db.create_auth("Lance", "1352040930lxr")
+    print(db.check_auth(_au))
 
-    # name = db.auth2username(au)
+    # name = db.auth2username(_au)
     # print(name)
 
-    print(au)
+    print(_au)
 
-    print(db.send_message(au, 1, "Test message", message_type='text'))
+    _gid = db.create_room(_au, "TEST GROUP")
+    print(type(_gid), _gid)
+    print(db.send_message(_au, _gid, "Test message"))
+    print(db.send_message(_au, _gid, "Sent by Lance"))
+    print(db.get_message(_au, _gid))
 
-    print(db.get_message(au, 1, limit=30))
+    _au2 = db.create_auth("Lance2", "1352040930lxr")
+    print(db.send_message(_au2, _gid, "Sent by Lance2"))
+    res = db.room_join_in(_au2, _gid)
+    print(db.send_message(_au2, _gid, "Sent by Lance2"))
+    print(res)
+
+    print(db.get_message(_au, _gid))
+
+    print(db.room_get_all(_au))
 
 

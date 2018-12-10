@@ -25,7 +25,9 @@ CREATE TABLE info (
     -- 目前成员个数
     member_number INT,
     -- 上次活跃时间
-    last_post_time VARCHAR(32)
+    last_post_time VARCHAR(32),
+    -- VALUE:FLAG
+    flag VARCHAR(32)
 );
 
 -- 成员列表
@@ -34,6 +36,6 @@ CREATE TABLE members (
     username VARCHAR(256)
 );
 
-INSERT INTO info (gid, name, last_mid, create_time, member_number, last_post_time) VALUES (0, "New group", 1, "", 0, "");
+INSERT INTO info (gid, name, last_mid, create_time, member_number, last_post_time, flag) VALUES (0, "New group", 1, "", 0, "", "FLAG");
 INSERT INTO message (uid, username, head, type, text) VALUES
     (0, "Administrator", "https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s=512", "text", "欢迎加入本群组！");

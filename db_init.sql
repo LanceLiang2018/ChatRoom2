@@ -36,4 +36,4 @@ CREATE TABLE auth (
 );
 
 -- 初始化维护
-INSERT INTO maintain (last_uid, last_gid, flag) VALUES (1, 1, "FLAG");
+INSERT INTO maintain (last_uid, last_gid, flag) VALUES (0, 0, "FLAG");
