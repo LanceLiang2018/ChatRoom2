@@ -8,19 +8,12 @@ app = Flask(__name__)
 db = DataBase()
 
 
-def as_json(func):
-    def inner(*args, **kwargs):
-        return json.dumps(func(*args, **kwargs))
-    return inner
-
-
 @app.route('/', methods=["GET"])
 def index():
     return "This is a server for Chat Room 2."
 
 
 @app.route('/get_message', methods=["POST"])
-@as_json
 def get_message():
     form = request.form
     try:
@@ -33,7 +26,7 @@ def get_message():
         return "Error %s" % str(e)
     # au = db.create_auth("Lance", "")
     data = db.get_message(auth, gid, limit=limit)
-    return data
+    return json.dumps(data)
 
 
 @app.route('/login', methods=["POST"])
@@ -81,8 +74,7 @@ def beat():
     return db.success
 
 
-@as_json
-@app.route('/create_room', methods=["PUSH"])
+@app.route('/create_room', methods=["POST"])
 def create_room():
     form = request.form
     try:
@@ -95,7 +87,7 @@ def create_room():
     if db.check_auth(auth) is False:
         return db.error["Auth"]
     gid = db.create_room(auth, name)
-    return {'result': db.success, 'gid': gid}
+    return json.dumps({'result': db.success, 'gid': gid})
 
 
 @app.route('/set_room_info', methods=["POST"])
@@ -125,7 +117,6 @@ def join_in():
     return res
 
 
-@as_json
 @app.route('/get_room_info', methods=["POST"])
 def get_room_info():
     form = request.form
@@ -135,10 +126,9 @@ def get_room_info():
     except Exception as e:
         return "Error. " + str(e)
     res = db.room_get_info(auth, gid)
-    return res
+    return json.dumps(res)
 
 
-@as_json
 @app.route('/get_room_all', methods=["POST"])
 def get_room_all():
     form = request.form
@@ -147,7 +137,7 @@ def get_room_all():
     except Exception as e:
         return "Error. " + str(e)
     res = db.room_get_all(auth)
-    return res
+    return json.dumps(res)
 
 
 if __name__ == '__main__':
