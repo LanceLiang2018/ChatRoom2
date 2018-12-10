@@ -168,8 +168,8 @@ class DataBase:
         # 设置本群基本信息
         conn = self.room_conn_get(gid)
         cursor = conn.cursor()
-        cursor.execute('UPDATE info SET name = ?, create_time = ?, last_post_time = ? WHERE FLAG = ?',
-                       (name, time.asctime(), time.asctime(), "FLAG"))
+        cursor.execute('UPDATE info SET gid = ?, name = ?, create_time = ?, last_post_time = ? WHERE FLAG = ?',
+                       (gid, name, time.asctime(), time.asctime(), "FLAG"))
         self.room_conn_finish(conn)
 
         self.room_update_active_time(gid)

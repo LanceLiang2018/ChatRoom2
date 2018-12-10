@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="装饰器好像不起作用呢">
+    <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/1/room.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/1/room.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,12 +22,14 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="60" />
-          <entry key="py" value="692" />
+          <entry key="py" value="732" />
+          <entry key="txt" value="40" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="752" />
+          <entry key="PLAIN_TEXT" value="40" />
+          <entry key="Python" value="792" />
         </counts>
       </usages-collector>
     </session>
@@ -40,27 +39,27 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1425">
-              <caret line="199" column="30" lean-forward="true" selection-start-line="199" selection-start-column="30" selection-end-line="199" selection-end-column="30" />
+            <state relative-caret-position="227">
+              <caret line="171" column="29" selection-start-line="171" selection-start-column="29" selection-end-line="171" selection-end-column="29" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
-                <marker date="1544451640410" expanded="true" signature="7405:7410" ph="..." />
+                <marker date="1544454174997" expanded="true" signature="7419:7424" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/manage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="56">
-              <caret line="107" column="26" lean-forward="true" selection-start-line="107" selection-start-column="26" selection-end-line="107" selection-end-column="26" />
+            <state relative-caret-position="191">
+              <caret line="136" column="20" selection-start-line="136" selection-start-column="20" selection-end-line="136" selection-end-column="20" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
-                <marker date="1544449407766" expanded="true" signature="3843:4067" ph="..." />
+                <marker date="1544452804996" expanded="true" signature="3843:4067" ph="..." />
               </folding>
             </state>
           </provider>
@@ -164,20 +163,7 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="ChatRoom2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ChatRoom2" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -281,7 +267,21 @@
       <option name="project" value="LOCAL" />
       <updated>1544429710639</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Fixed more modules">
+      <created>1544452237044</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1544452237044</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Empty dir?">
+      <created>1544452829527</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1544452829527</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TodoView">
@@ -326,7 +326,9 @@
     <MESSAGE value="manage.py" />
     <MESSAGE value="More..And More!!!" />
     <MESSAGE value="装饰器好像不起作用呢" />
-    <option name="LAST_COMMIT_MESSAGE" value="装饰器好像不起作用呢" />
+    <MESSAGE value="Fixed more modules" />
+    <MESSAGE value="Empty dir?" />
+    <option name="LAST_COMMIT_MESSAGE" value="Empty dir?" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://E:/chatroom-new/chatroom/sever.py" />
@@ -358,24 +360,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database.py">
+    <entry file="file://$PROJECT_DIR$/manage.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1425">
-          <caret line="199" column="30" lean-forward="true" selection-start-line="199" selection-start-column="30" selection-end-line="199" selection-end-column="30" />
+        <state relative-caret-position="191">
+          <caret line="136" column="20" selection-start-line="136" selection-start-column="20" selection-end-line="136" selection-end-column="20" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
-            <marker date="1544451640410" expanded="true" signature="7405:7410" ph="..." />
+            <element signature="e#0#19#0" expanded="true" />
+            <marker date="1544452804996" expanded="true" signature="3843:4067" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/manage.py">
+    <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="107" column="26" lean-forward="true" selection-start-line="107" selection-start-column="26" selection-end-line="107" selection-end-column="26" />
+        <state relative-caret-position="227">
+          <caret line="171" column="29" selection-start-line="171" selection-start-column="29" selection-end-line="171" selection-end-column="29" />
           <folding>
-            <element signature="e#0#19#0" expanded="true" />
-            <marker date="1544449407766" expanded="true" signature="3843:4067" ph="..." />
+            <element signature="e#0#21#0" expanded="true" />
+            <marker date="1544454174997" expanded="true" signature="7419:7424" ph="..." />
           </folding>
         </state>
       </provider>
