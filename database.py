@@ -403,7 +403,8 @@ class DataBase:
 if __name__ == '__main__':
     db = DataBase()
 
-    # db.db_init()
+    db.db_init()
+    exit()
     db.create_user("Lance", "1352040930lxr")
     db.create_user("Lance2", "1352040930lxr")
     # print(db.check_in("users", "username", "Lance"))
