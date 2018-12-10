@@ -140,5 +140,16 @@ def get_room_all():
     return json.dumps(res)
 
 
+@app.route('/clear_all', methods=["POST", "GET"])
+def clear_all():
+    try:
+        os.system('rm -R ./data')
+        os.system('mkdir ./data')
+        db.db_init()
+    except Exception as e:
+        return 'Error. %s' % str(e)
+    return db.success
+
+
 if __name__ == '__main__':
     app.run("0.0.0.0", port=os.environ.get('PORT', '5000'), debug=True)
