@@ -4,6 +4,8 @@ CREATE TABLE message (
     uid INT,
     -- 消息id（排序用）
     mid INT,
+    -- 重要：gid，表明所属以便SELECT
+    gid INT,
     username VARCHAR(512),
     head VARCHAR(128),
     -- 类型：{'text', 'image', 'file'}
@@ -26,13 +28,11 @@ CREATE TABLE info (
     member_number INT,
     -- 上次活跃时间
     last_post_time VARCHAR(32),
-    -- VALUE:FLAG
-    flag VARCHAR(32)
 );
 
--- 成员列表
+-- 成员-group关联列表（加群记录）
 CREATE TABLE members (
-    uid INT,
+    gid INT,
     username VARCHAR(256)
 );
 
