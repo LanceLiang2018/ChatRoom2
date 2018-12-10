@@ -149,8 +149,8 @@ class DataBase:
 
         cursor.execute("INSERT INTO info (gid, name, create_time, member_number, last_post_time) "
                        "VALUES (%s, %s, %s, %s, %s)", (last_gid, 'New Group', time.asctime(), 0, time.asctime()))
-        cursor.execute("INSERT INTO message (gid, uid, username, head, type, text) VALUES "
-                       "(%s, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s"
+        cursor.execute("INSERT INTO message (gid, mid, uid, username, head, type, text) VALUES "
+                       "(%s, 0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s"
                        "=512', 'text',  %s)", (last_gid, "Welcome to this room!"))
 
         self.cursor_finish(cursor)
