@@ -8,6 +8,16 @@ app = Flask(__name__)
 db = DataBase()
 
 
+def delete_dir(_dir):
+    for name in os.listdir(_dir):
+        file = _dir + "/" + name
+        if not os.path.isfile(file) and os.path.isdir(file):
+            delete_dir(file)  # It's another directory - recurse in to it...
+        else:
+            os.remove(file)  # It's a file - remove it...
+    os.rmdir(_dir)
+
+
 @app.route('/', methods=["GET"])
 def index():
     return "This is a server for Chat Room 2."
@@ -24,7 +34,6 @@ def get_message():
             limit = int(form['limit'])
     except Exception as e:
         return "Error %s" % str(e)
-    # au = db.create_auth("Lance", "")
     data = db.get_message(auth, gid, limit=limit)
     return json.dumps(data)
 
@@ -140,11 +149,23 @@ def get_room_all():
     return json.dumps(res)
 
 
+@app.route('/get_room_members', methods=["POST"])
+def get_room_munbers():
+    form = request.form
+    try:
+        auth = form['auth']
+        gid = int(form['gid'])
+    except Exception as e:
+        return "Error. " + str(e)
+    res = db.room_get_members(auth, gid)
+    return json.dumps(res)
+
+
 @app.route('/clear_all', methods=["POST", "GET"])
 def clear_all():
     try:
-        os.system('rm -R ./data')
-        os.system('mkdir ./data')
+        delete_dir('./data')
+        os.mkdir('data')
         db.db_init()
     except Exception as e:
         return 'Error. %s' % str(e)
@@ -152,4 +173,4 @@ def clear_all():
 
 
 if __name__ == '__main__':
-    app.run("0.0.0.0", port=os.environ.get('PORT', '5000'), debug=True)
+    app.run("0.0.0.0", port=os.environ.get('PORT', '5000'), debug=False)

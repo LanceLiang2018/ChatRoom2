@@ -57,7 +57,7 @@ class DataBase:
         last_uid = self.get_last_uid()
         # 更新last_uid
         last_uid = last_uid + 1
-        cursor.execute("UPDATE maintain SET last_uid = ? WHERE flag = FLAG", (last_uid, ))
+        cursor.execute("UPDATE maintain SET last_uid = ? WHERE flag = FLAG", (last_uid,))
         self.cursor_finish(cursor)
         return last_uid
 
@@ -66,7 +66,7 @@ class DataBase:
         last_gid = self.get_last_gid()
         # 更新last_gid
         last_gid = last_gid + 1
-        cursor.execute("UPDATE maintain SET last_gid = ? WHERE flag = FLAG", (last_gid, ))
+        cursor.execute("UPDATE maintain SET last_gid = ? WHERE flag = FLAG", (last_gid,))
         self.cursor_finish(cursor)
         return last_gid
 
@@ -165,17 +165,11 @@ class DataBase:
         # 让本人加群
         self.room_join_in(auth, gid)
 
-        # # 加入是否在群中的检验
-        # cursor = self.cursor_get()
-        # username = self.auth2username(auth)
-        # cursor.execute("INSERT INTO rooms (username, gid) VALUES (?, ?)", (username, gid))
-        # self.cursor_finish(cursor)
-
         # 设置本群基本信息
         conn = self.room_conn_get(gid)
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO info (name, create_time, last_post_time) VALUES '
-                       '(?, ?, ?)', (name, time.asctime(), time.asctime()))
+        cursor.execute('UPDATE info SET name = ?, create_time = ?, last_post_time = ? WHERE FLAG = ?',
+                       (name, time.asctime(), time.asctime(), "FLAG"))
         self.room_conn_finish(conn)
 
         self.room_update_active_time(gid)
@@ -209,11 +203,31 @@ class DataBase:
         self.room_conn_finish(conn)
         return self.success
 
+    def room_get_members(self, auth, gid):
+        if self.check_auth(auth) is False:
+            return self.error["Auth"]
+        if self.room_check_exist(gid) is False:
+            return self.error["RoomNumber"]
+        conn = self.room_conn_get(gid)
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM members")
+        data = cursor.fetchall()
+        data = list(map(lambda x: x[0], data))
+        heads = []
+        for username in data:
+            heads.append(self.user_get_head(username))
+        result = []
+        for i in range(len(data)):
+            result.append({'username': data[i], 'head': heads[i]})
+        cursor.close()
+        self.room_conn_finish(conn)
+        return result
+
     # 房间号→Name
     def number2name(self, gid):
         conn = self.room_conn_get(gid)
         cursor = conn.cursor()
-        cursor.execute("SELECT name FROM info WHERE flag = ?", ("FLAG", ))
+        cursor.execute("SELECT name FROM info WHERE flag = ?", ("FLAG",))
         name = cursor.fetchall()[0][0]
         cursor.close()
         self.room_conn_finish(conn)
@@ -226,7 +240,7 @@ class DataBase:
         conn = self.room_conn_get(gid)
         cursor = conn.cursor()
         cursor.execute("SELECT gid, name, create_time, member_number, last_post_time "
-                       "FROM info WHERE flag = ?", ("FLAG", ))
+                       "FROM info WHERE flag = ?", ("FLAG",))
         data = cursor.fetchall()[0]
         cursor.close()
 
@@ -262,7 +276,7 @@ class DataBase:
             return False
         cursor = self.cursor_get()
         password = hashlib.md5(password.encode()).hexdigest()
-        cursor.execute("SELECT password FROM users WHERE username = ?", (username, ))
+        cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
         storage = cursor.fetchall()[0][0]
         # print(storage)
         self.cursor_finish(cursor)
@@ -274,7 +288,7 @@ class DataBase:
         if self.check_in("users", "username", username) is False:
             return self.error["NoUser"]
         cursor = self.cursor_get()
-        cursor.execute("SELECT head FROM users WHERE username = ?", (username, ))
+        cursor.execute("SELECT head FROM users WHERE username = ?", (username,))
         head = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
         return head
@@ -305,7 +319,7 @@ class DataBase:
         if self.check_auth(auth) is False:
             return 'No_User'
         cursor = self.cursor_get()
-        cursor.execute("SELECT username FROM auth WHERE auth = ?", (auth, ))
+        cursor.execute("SELECT username FROM auth WHERE auth = ?", (auth,))
         username = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
         return username
@@ -387,7 +401,7 @@ class DataBase:
         cursor = conn.cursor()
         result = []
         unit_ = {}
-        cursor.execute("SELECT username, head, type, text FROM message ORDER BY mid DESC LIMIT ?", (limit, ))
+        cursor.execute("SELECT username, head, type, text FROM message ORDER BY mid DESC LIMIT ?", (limit,))
         data = cursor.fetchall()
         for d in data:
             unit_['username'] = d[0]
@@ -404,7 +418,7 @@ if __name__ == '__main__':
     db = DataBase()
 
     db.db_init()
-    exit()
+    # exit()
     db.create_user("Lance", "1352040930lxr")
     db.create_user("Lance2", "1352040930lxr")
     # print(db.check_in("users", "username", "Lance"))
@@ -433,4 +447,4 @@ if __name__ == '__main__':
 
     print(db.room_get_all(_au))
 
-
+    print(db.room_get_members(_au, _gid))
