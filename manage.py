@@ -164,7 +164,10 @@ def get_room_munbers():
 @app.route('/clear_all', methods=["POST", "GET"])
 def clear_all():
     try:
-        delete_dir('./data')
+        try:
+            delete_dir('./data')
+        except Exception as e:
+            print(e)
         os.mkdir('data')
         db.db_init()
     except Exception as e:
