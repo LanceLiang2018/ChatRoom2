@@ -149,9 +149,9 @@ class DataBase:
 
         cursor.execute("INSERT INTO info (gid, name, create_time, member_number, last_post_time) "
                        "VALUES (%s, %s, %s, %s, %s)", (last_gid, 'New Group', int(time.time()), 0, int(time.time())))
-        cursor.execute("INSERT INTO message (gid, mid, uid, username, head, type, text) VALUES "
+        cursor.execute("INSERT INTO message (gid, mid, uid, username, head, type, text, send_time) VALUES "
                        "(%s, 0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s"
-                       "=512', 'text',  %s)", (last_gid, "Welcome to this room!"))
+                       "=512', 'text',  %s, %s)", (last_gid, "Welcome to this room!", int(time.time())))
 
         self.cursor_finish(cursor)
         # 返回这次建立的gid
