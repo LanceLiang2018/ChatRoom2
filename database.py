@@ -357,7 +357,7 @@ class DataBase:
 
     def room_update_active_time(self, gid):
         cursor = self.cursor_get()
-        cursor.execute("UPDATE info SET last_post_time = %s WHERE gid = %s", (time.asctime(), gid))
+        cursor.execute("UPDATE info SET last_post_time = %s WHERE gid = %s", (int(time.time()), gid))
         self.cursor_finish(cursor)
 
     def send_message(self, auth, gid, text, message_type='text'):
@@ -376,7 +376,8 @@ class DataBase:
         if self.room_check_exist(gid) is False:
             return self.error["RoomNumber"]
         cursor = self.cursor_get()
-        cursor.execute("INSERT INTO message (mid, gid, username, head, type, text, send_time) VALUES (%s, %s, %s, %s, %s, %s)",
+        cursor.execute("INSERT INTO message (mid, gid, username, head, type, text, send_time) "
+                       "VALUES (%s, %s, %s, %s, %s, %s, %s)",
                        (last_mid, gid, username, head, message_type, text, int(time.time())))
         self.cursor_finish(cursor)
 
