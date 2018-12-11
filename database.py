@@ -148,7 +148,7 @@ class DataBase:
         last_gid = self.update_last_gid()
 
         cursor.execute("INSERT INTO info (gid, name, create_time, member_number, last_post_time) "
-                       "VALUES (%s, %s, %s, %s, %s)", (last_gid, 'New Group', time.asctime(), 0, time.asctime()))
+                       "VALUES (%s, %s, %s, %s, %s)", (last_gid, 'New Group', int(time.time()), 0, int(time.time())))
         cursor.execute("INSERT INTO message (gid, mid, uid, username, head, type, text) VALUES "
                        "(%s, 0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s"
                        "=512', 'text',  %s)", (last_gid, "Welcome to this room!"))
@@ -169,7 +169,7 @@ class DataBase:
         # 设置本群基本信息
         cursor = self.cursor_get()
         cursor.execute('UPDATE info SET name = %s, create_time = %s, last_post_time = %s WHERE gid = %s',
-                       (name, time.asctime(), time.asctime(), gid))
+                       (name, int(time.time()), int(time.time()), gid))
         self.cursor_finish(cursor)
 
         self.room_update_active_time(gid)
@@ -376,8 +376,8 @@ class DataBase:
         if self.room_check_exist(gid) is False:
             return self.error["RoomNumber"]
         cursor = self.cursor_get()
-        cursor.execute("INSERT INTO message (mid, gid, username, head, type, text) VALUES (%s, %s, %s, %s, %s, %s)",
-                       (last_mid, gid, username, head, message_type, text))
+        cursor.execute("INSERT INTO message (mid, gid, username, head, type, text, send_time) VALUES (%s, %s, %s, %s, %s, %s)",
+                       (last_mid, gid, username, head, message_type, text, int(time.time())))
         self.cursor_finish(cursor)
 
         self.room_update_active_time(gid)
@@ -395,14 +395,12 @@ class DataBase:
         cursor = self.cursor_get()
         result = []
         unit_ = {}
-        cursor.execute("SELECT username, head, type, text FROM message WHERE gid = %s ORDER BY mid DESC LIMIT %s",
+        cursor.execute("SELECT username, head, type, text, send_time FROM message "
+                       "WHERE gid = %s ORDER BY mid DESC LIMIT %s",
                        (gid, limit))
         data = cursor.fetchall()
         for d in data:
-            unit_['username'] = d[0]
-            unit_['head'] = d[1]
-            unit_['type'] = d[2]
-            unit_['text'] = d[3]
+            unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
             result.append(copy.deepcopy(unit_))
         self.cursor_finish(cursor)
         return result

@@ -46,7 +46,8 @@ CREATE TABLE message (
     -- 类型：{'text', 'image', 'file'}
     type VARCHAR(32),
     -- 不一定是文本内容。如果是image或者file，将包含一个链接。
-    text VARCHAR(8192)
+    text VARCHAR(8192),
+    send_time INT
 );
 
 -- 群基本信息
@@ -56,11 +57,11 @@ CREATE TABLE info (
     -- Group name
     name VARCHAR(512),
     -- 创建时间（time.asctime()）varchar
-    create_time VARCHAR(32),
+    create_time INT,
     -- 目前成员个数
     member_number INT,
     -- 上次活跃时间
-    last_post_time VARCHAR(32)
+    last_post_time INT
 );
 
 -- 成员-group关联列表（加群记录）
