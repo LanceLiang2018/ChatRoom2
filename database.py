@@ -238,8 +238,8 @@ class DataBase:
         self.cursor_finish(cursor)
 
         info = {
-            'gid': int(gid), 'name': data[1], 'create_time': data[2],
-            'member_number': data[3], 'last_post_time': data[4]
+            'gid': int(gid), 'name': data[0], 'create_time': data[1],
+            'member_number': data[2], 'last_post_time': data[3]
         }
         return info
 
