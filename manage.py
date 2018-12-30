@@ -18,9 +18,17 @@ def delete_dir(_dir):
     os.rmdir(_dir)
 
 
-@app.route('/', methods=["GET"])
+@app.route('/', methods=["GET", "POST"])
 def index():
-    return "This is a server for Chat Room 2."
+    # return "This is a server for Chat Room 2."
+    res = '###### manage.py:\n'
+    with open('manage.py', 'r', encoding='utf8') as f:
+        res = res + f.read()
+    res = res + "###### database.py\n"
+    with open('database.py', 'r', encoding='utf8') as f:
+        res = res + f.read()
+    res = res + '\n\n##### End of files.\n'
+    return res
 
 
 @app.route('/get_message', methods=["POST"])
@@ -35,7 +43,7 @@ def get_message():
     except Exception as e:
         return "Error %s" % str(e)
     data = db.get_message(auth, gid, limit=limit)
-    return json.dumps(data)
+    return data
 
 
 @app.route('/login', methods=["POST"])
@@ -80,7 +88,7 @@ def beat():
         return "Error. " + str(e)
     if db.check_auth(auth) is False:
         return db.error["Error"]
-    return db.success
+    return db.make_result(0)
 
 
 @app.route('/create_room', methods=["POST"])
@@ -96,7 +104,7 @@ def create_room():
     if db.check_auth(auth) is False:
         return db.error["Auth"]
     gid = db.create_room(auth, name)
-    return json.dumps({'result': db.success, 'gid': gid})
+    return db.make_result(0, gid=gid)
 
 
 @app.route('/set_room_info', methods=["POST"])
@@ -135,7 +143,7 @@ def get_room_info():
     except Exception as e:
         return "Error. " + str(e)
     res = db.room_get_info(auth, gid)
-    return json.dumps(res)
+    return res
 
 
 @app.route('/get_room_all', methods=["POST"])
@@ -146,11 +154,11 @@ def get_room_all():
     except Exception as e:
         return "Error. " + str(e)
     res = db.room_get_all(auth)
-    return json.dumps(res)
+    return res
 
 
 @app.route('/get_room_members', methods=["POST"])
-def get_room_munbers():
+def get_room_numbers():
     form = request.form
     try:
         auth = form['auth']
@@ -158,21 +166,16 @@ def get_room_munbers():
     except Exception as e:
         return "Error. " + str(e)
     res = db.room_get_members(auth, gid)
-    return json.dumps(res)
+    return res
 
 
 @app.route('/clear_all', methods=["POST", "GET"])
 def clear_all():
     try:
-        try:
-            delete_dir('./data')
-        except Exception as e:
-            print(e)
-        os.mkdir('data')
         db.db_init()
     except Exception as e:
         return 'Error. %s' % str(e)
-    return db.success
+    return db.make_result(0)
 
 
 if __name__ == '__main__':
