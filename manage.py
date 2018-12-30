@@ -1,7 +1,21 @@
 from flask import *
 from database import DataBase
-import json
+import base64
+import time
+# import json
 import os
+import hashlib
+from qcloud_cos import CosConfig
+from qcloud_cos import CosS3Client
+
+secret_id = 'AKIDcq7HVrj0nlAWUYvPoslyMKKI2GNJ478z'
+secret_key = '70xZrtGAwmf6WdXGhcch3gRt7hV4SJGx'
+region = 'ap-chengdu'
+config = CosConfig(Region=region, SecretId=secret_id, SecretKey=secret_key)
+# 2. 获取客户端对象
+client = CosS3Client(config)
+
+bucket = 'chatroom-1254016670'
 
 app = Flask(__name__)
 
@@ -41,7 +55,7 @@ def get_message():
         if 'limit' in form:
             limit = int(form['limit'])
     except Exception as e:
-        return "Error %s" % str(e)
+        return db.make_result(1, message=str(e))
     data = db.get_message(auth, gid, limit=limit)
     return data
 
@@ -52,7 +66,7 @@ def login():
     try:
         username, password = form['username'], form['password']
     except Exception as e:
-        return "Error %s" % str(e)
+        return db.make_result(1, message=str(e))
     return db.create_auth(username, password)
 
 
@@ -65,7 +79,7 @@ def send_message():
         if 'message_type' in form:
             message_type = form['message_type']
     except Exception as e:
-        return "Error %s" % str(e)
+        return db.make_result(1, message=str(e))
     return db.send_message(auth, gid, text, message_type)
 
 
@@ -75,7 +89,7 @@ def signup():
     try:
         username, password, name, email = form['username'], form['password'], form['name'], form['email']
     except Exception as e:
-        return "Error %s" % str(e)
+        return db.make_result(1, message=str(e))
     return str(db.create_user(username, password, name, email))
 
 
@@ -85,7 +99,7 @@ def beat():
     try:
         auth = form['auth']
     except Exception as e:
-        return "Error. " + str(e)
+        return db.make_result(1, message=str(e))
     if db.check_auth(auth) is False:
         return db.error["Error"]
     return db.make_result(0)
@@ -100,7 +114,7 @@ def create_room():
         if 'name' in form:
             name = form['name']
     except Exception as e:
-        return "Error. " + str(e)
+        return db.make_result(1, message=str(e))
     if db.check_auth(auth) is False:
         return db.error["Auth"]
     gid = db.create_room(auth, name)
@@ -117,7 +131,7 @@ def set_room_info():
         if 'name' in form:
             name = form['name']
     except Exception as e:
-        return "Error. " + str(e)
+        return db.make_result(1, message=str(e))
     res = db.room_set_info(auth, gid, name)
     return res
 
@@ -129,7 +143,7 @@ def join_in():
         auth = form['auth']
         gid = int(form['gid'])
     except Exception as e:
-        return "Error. " + str(e)
+        return db.make_result(1, message=str(e))
     res = db.room_join_in(auth, gid)
     return res
 
@@ -141,7 +155,7 @@ def get_room_info():
         auth = form['auth']
         gid = int(form['gid'])
     except Exception as e:
-        return "Error. " + str(e)
+        return db.make_result(1, message=str(e))
     res = db.room_get_info(auth, gid)
     return res
 
@@ -152,7 +166,7 @@ def get_room_all():
     try:
         auth = form['auth']
     except Exception as e:
-        return "Error. " + str(e)
+        return db.make_result(1, message=str(e))
     res = db.room_get_all(auth)
     return res
 
@@ -164,7 +178,7 @@ def get_room_numbers():
         auth = form['auth']
         gid = int(form['gid'])
     except Exception as e:
-        return "Error. " + str(e)
+        return db.make_result(1, message=str(e))
     res = db.room_get_members(auth, gid)
     return res
 
@@ -174,8 +188,33 @@ def clear_all():
     try:
         db.db_init()
     except Exception as e:
-        return 'Error. %s' % str(e)
+        return db.make_result(1, message=str(e))
     return db.make_result(0)
+
+
+@app.route('/upload', methods=["POST"])
+def upload():
+    try:
+        auth = request.form['auth']
+        if db.check_auth(auth) is False:
+            return db.make_result(2)
+        data = request.form['data']
+        data = base64.b64decode(data)
+        md5 = hashlib.md5(data).hexdigest()
+        filename = "%s" % md5
+        response = client.put_object(
+            Bucket=bucket,
+            Body=data,
+            Key=filename,
+            StorageClass='STANDARD',
+            EnableMD5=False
+            # 我自己算吧......
+        )
+        print(response)
+        return db.make_result(0, filename=filename, md5=md5, etag=response['ETag'][1:-1],
+                              url='https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename))
+    except Exception as e:
+        return db.make_result(1, message=str(e))
 
 
 if __name__ == '__main__':
