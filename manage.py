@@ -101,7 +101,7 @@ def beat():
     except Exception as e:
         return db.make_result(1, message=str(e))
     if db.check_auth(auth) is False:
-        return db.error["Error"]
+        return db.make_result(2)
     return db.make_result(0)
 
 
@@ -116,9 +116,9 @@ def create_room():
     except Exception as e:
         return db.make_result(1, message=str(e))
     if db.check_auth(auth) is False:
-        return db.error["Auth"]
+        return db.make_result(2)
     gid = db.create_room(auth, name)
-    return db.make_result(0, gid=gid)
+    return get_room_info(auth, gid)
 
 
 @app.route('/set_room_info', methods=["POST"])
