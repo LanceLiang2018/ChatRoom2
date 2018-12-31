@@ -393,7 +393,7 @@ class DataBase:
         for d in data:
             result.append({"name": d[1], "gid": int(d[0])})
         self.cursor_finish(cursor)
-        return self.make_result(0, result=result)
+        return self.make_result(0, room_data=result)
 
     def room_update_active_time(self, gid):
         cursor = self.cursor_get()
@@ -444,7 +444,7 @@ class DataBase:
             unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
             result.append(copy.deepcopy(unit_))
         self.cursor_finish(cursor)
-        return self.make_result(0, result=result)
+        return self.make_result(0, message=result)
 
 
 def module_test():
