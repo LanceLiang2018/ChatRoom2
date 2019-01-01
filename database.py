@@ -342,7 +342,8 @@ class DataBase:
             cursor.execute("INSERT INTO auth (username, auth) VALUES (%s, %s)".replace('%s', self.sql_char), (username, auth))
 
         self.cursor_finish(cursor)
-        return self.make_result(0, auth=auth)
+        head = self.get_head(auth)
+        return self.make_result(0, auth=auth, head=head)
 
     def check_auth(self, auth):
         result = self.check_in("auth", "auth", auth)
@@ -358,6 +359,17 @@ class DataBase:
         username = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
         return username
+
+    def get_head(self, auth):
+        if self.check_auth(auth) is False:
+            return ""
+        username = self.auth2username(auth)
+        cursor = self.cursor_get()
+        cursor.execute("SELECT head FROM users WHERE username = %s".replace('%s', self.sql_char), (username, ))
+        head = cursor.fetchall()[0][0]
+        self.cursor_finish(cursor)
+        return head
+
 
     def room_check_in(self, auth, gid):
         # 检验是否在房间内
@@ -405,8 +417,8 @@ class DataBase:
             return self.make_result(self.errors["Auth"])
         if self.room_check_exist(gid) is False:
             return self.make_result(self.errors["RoomNumber"])
-        if self.room_check_in(auth, gid) is False:
-            return self.make_result(self.errors["NotIn"])
+        # if self.room_check_in(auth, gid) is False:
+        #     return self.make_result(self.errors["NotIn"])
 
         username = self.auth2username(auth)
 
@@ -430,8 +442,8 @@ class DataBase:
             return self.make_result(self.errors["Auth"])
         if self.room_check_exist(gid) is False:
             return self.make_result(self.errors["RoomNumber"])
-        if self.room_check_in(auth, gid) is False:
-            return self.make_result(self.errors["NotIn"])
+        # if self.room_check_in(auth, gid) is False:
+        #     return self.make_result(self.errors["NotIn"])
 
         cursor = self.cursor_get()
         result = []

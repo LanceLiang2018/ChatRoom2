@@ -45,6 +45,20 @@ def index():
     return res
 
 
+@app.route('/get_head', methods=["POST"])
+def get_head():
+    form = request.form
+    try:
+        auth = form['auth']
+    except Exception as e:
+        return db.make_result(1, message=str(e))
+    if db.check_auth(auth) is False:
+        return db.make_result(2)
+    username = db.auth2username(auth)
+    head = db.get_head(auth)
+    return db.make_result(0, username=username, head=head)
+
+
 @app.route('/get_message', methods=["POST", "GET"])
 def get_message():
     form = request.form
