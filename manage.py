@@ -45,18 +45,21 @@ def index():
     return res
 
 
-@app.route('/get_message', methods=["POST"])
+@app.route('/get_message', methods=["POST", "GET"])
 def get_message():
     form = request.form
     try:
         auth = form['auth']
         gid = int(form['gid'])
         limit = 30
+
+        # print(auth, gid, limit)
         if 'limit' in form:
             limit = int(form['limit'])
     except Exception as e:
         return db.make_result(1, message=str(e))
     data = db.get_message(auth, gid, limit=limit)
+    print('get_message():', data)
     return data
 
 
