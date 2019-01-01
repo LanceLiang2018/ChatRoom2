@@ -118,7 +118,7 @@ def create_room():
     if db.check_auth(auth) is False:
         return db.make_result(2)
     gid = db.create_room(auth, name)
-    return get_room_info(auth, gid)
+    return db.room_get_info(auth, gid)
 
 
 @app.route('/set_room_info', methods=["POST"])
