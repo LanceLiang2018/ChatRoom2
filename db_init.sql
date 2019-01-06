@@ -10,6 +10,8 @@ CREATE TABLE users (
     email VARCHAR(512),
     -- 头像
     head VARCHAR(512),
+    -- 最新消息
+    latest_mid INT,
     -- 用户状态：在线(Online(1))或者下线(Offline(0))
     status INT
 );

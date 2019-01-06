@@ -53,8 +53,8 @@ class DataBase:
 
         # self.sql_type = "PostgreSQL"
         self.sql_types = {"SQLite": 0, "PostgreSQL": 1}
-        self.sql_type = self.sql_types['PostgreSQL']
         # self.sql_type = self.sql_types['PostgreSQL']
+        self.sql_type = self.sql_types['SQLite']
         self.sql_chars = ["?", "%s"]
         self.sql_char = self.sql_chars[self.sql_type]
 
@@ -295,8 +295,8 @@ class DataBase:
         password = hashlib.md5(password.encode()).hexdigest()
         email = email.lower()
         head = get_head(email)
-        cursor.execute("INSERT INTO users (uid, username, password, name, email, head) VALUES (%s, %s, %s, %s, %s, %s)".replace('%s', self.sql_char),
-                       (last_uid, username, password, name, email, head))
+        cursor.execute("INSERT INTO users (uid, username, password, name, email, head, latest_mid) VALUES (%s, %s, %s, %s, %s, %s, %s)".replace('%s', self.sql_char),
+                       (last_uid, username, password, name, email, head, 0))
 
         self.update_last_uid()
         self.cursor_finish(cursor)
@@ -436,7 +436,7 @@ class DataBase:
         self.room_update_active_time(gid)
         return self.make_result(0)
 
-    # 返回格式：(username, head, type, text)(json)
+    # 返回格式：(username, head, type, text, mid)(json)
     def get_message(self, auth, gid, limit=30):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
@@ -448,16 +448,55 @@ class DataBase:
         cursor = self.cursor_get()
         result = []
         unit_ = {}
-        cursor.execute("SELECT username, head, type, text, send_time FROM message "
+        cursor.execute("SELECT mid, username, head, type, text, send_time FROM message "
                        "WHERE gid = %s ORDER BY mid DESC LIMIT %s".replace('%s', self.sql_char),
                        (gid, limit))
         data = cursor.fetchall()
         for d in data:
-            unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
+            unit_['mid'], unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
             result.append(copy.deepcopy(unit_))
         self.cursor_finish(cursor)
         return self.make_result(0, message=result)
 
+    def user_get_latest_mid(self, auth=None, username=None):
+        if auth is None and username is None:
+            return 0
+        if username is None:
+            username = self.auth2username(auth)
+        cursor = self.cursor_get()
+        cursor.execute("SELECT latest_mid FROM users "
+                       "WHERE username = %s".replace('%s', self.sql_char),
+                       (username, ))
+        data = cursor.fetchall()[0][0]
+        cursor.close()
+        return data
+
+    def have_read(self, auth, latest_mid):
+        if self.check_auth(auth) is False:
+            return self.make_result(self.errors["Auth"])
+        username = self.auth2username(auth)
+
+        cursor = self.cursor_get()
+        cursor.execute("UPDATE users SET latest_mid = %s WHERE username = %s".replace('%s', self.sql_char),
+                       (int(latest_mid), username))
+        self.cursor_finish(cursor)
+        return self.make_result(0)
+
+    def has_new_message(self, auth, gid):
+        if self.check_auth(auth) is False:
+            return self.make_result(self.errors["Auth"])
+        username = self.auth2username(auth)
+
+        cursor = self.cursor_get()
+        cursor.execute("SELECT mid FROM message "
+                       "WHERE gid = %s ORDER BY mid DESC LIMIT %s".replace('%s', self.sql_char),
+                       (gid, 1))
+        data = cursor.fetchall()
+        self.cursor_finish(cursor)
+        result = {
+
+        }
+        # if len(data) == 0:
 
 def module_test():
     db = DataBase()
@@ -486,11 +525,23 @@ def module_test():
     print(db.room_get_members(_au, _gid))
 
 
+def MiniTest():
+    db = DataBase()
+    db.db_init()
+    db.create_user("Lance", "")
+    _au = json.loads(db.create_auth("Lance", ""))['data']['auth']
+    print(db.user_get_latest_mid(auth=_au))
+    print(db.have_read(_au, 1))
+    print(db.user_get_latest_mid(auth=_au))
+    _gid = db.create_room(_au, "TEST GROUP")
+    print(db.room_join_in(_au, _gid))
+
+
 if __name__ == '__main__':
     # db = DataBase()
     # db.db_init()
     # print(db.update_last_mid())
     # print(db.make_result(0, messages={"s": "a"}))
 
-    module_test()
-
+    # module_test()
+    MiniTest()
