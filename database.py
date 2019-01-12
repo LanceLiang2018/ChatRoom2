@@ -49,7 +49,8 @@ class DataBase:
             str(7): self.error["Password"],
         }
         self.tables = ['users', 'maintain', 'auth',
-                       'message', 'info', 'members', ]
+                       'message', 'info', 'members',
+                       'new_messages']
 
         # self.sql_type = "PostgreSQL"
         self.sql_types = {"SQLite": 0, "PostgreSQL": 1}
@@ -221,9 +222,14 @@ class DataBase:
         # 检查房间存在
         if self.room_check_exist(gid) is False:
             return self.make_result(self.errors["RoomNumber"])
+        if self.room_check_in(auth, gid) is False:
+            return self.make_result(self.errors["NotIn"])
         cursor = self.cursor_get()
         username = self.auth2username(auth)
-        cursor.execute("INSERT INTO members (gid, username) VALUES (%s, %s)".replace('%s', self.sql_char), (gid, username))
+        cursor.execute("INSERT INTO members (gid, username) VALUES (%s, %s)".replace('%s', self.sql_char),
+                       (gid, username))
+        cursor.execute("INSERT INTO new_messages (gid, username, latest_mid) VALUES (%s, %s, %s)".replace('%s', self.sql_char),
+                       (gid, username, 0))
         self.cursor_finish(cursor)
         self.room_update_number(gid)
         return self.make_result(0)
@@ -295,8 +301,10 @@ class DataBase:
         password = hashlib.md5(password.encode()).hexdigest()
         email = email.lower()
         head = get_head(email)
-        cursor.execute("INSERT INTO users (uid, username, password, name, email, head, latest_mid) VALUES (%s, %s, %s, %s, %s, %s, %s)".replace('%s', self.sql_char),
-                       (last_uid, username, password, name, email, head, 0))
+        cursor.execute("INSERT INTO users "
+                       "(uid, username, password, name, email, head) "
+                       "VALUES (%s, %s, %s, %s, %s, %s)".replace('%s', self.sql_char),
+                       (last_uid, username, password, name, email, head))
 
         self.update_last_uid()
         self.cursor_finish(cursor)
@@ -321,7 +329,8 @@ class DataBase:
 
     def user_get_head(self, username):
         if self.check_in("users", "username", username) is False:
-            return self.make_result(self.errors["NoUser"])
+            # return self.make_result(self.errors["NoUser"])
+            return ""
         cursor = self.cursor_get()
         cursor.execute("SELECT head FROM users WHERE username = %s".replace('%s', self.sql_char), (username, ))
         head = cursor.fetchall()[0][0]
@@ -369,7 +378,6 @@ class DataBase:
         head = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
         return head
-
 
     def room_check_in(self, auth, gid):
         # 检验是否在房间内
@@ -460,25 +468,28 @@ class DataBase:
 
     def user_get_latest_mid(self, auth=None, username=None):
         if auth is None and username is None:
-            return 0
+            return ""
         if username is None:
             username = self.auth2username(auth)
         cursor = self.cursor_get()
-        cursor.execute("SELECT latest_mid FROM users "
+        cursor.execute("SELECT gid, latest_mid FROM new_messages "
                        "WHERE username = %s".replace('%s', self.sql_char),
                        (username, ))
-        data = cursor.fetchall()[0][0]
+        data = cursor.fetchall()
         cursor.close()
-        return data
+        result = []
+        for d in data:
+            result.append({"gid": d[0], "latest_mid": d[1]})
+        return self.make_result(0, new_messages=result)
 
-    def have_read(self, auth, latest_mid):
+    def have_read(self, auth, gid, latest_mid):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         username = self.auth2username(auth)
 
         cursor = self.cursor_get()
-        cursor.execute("UPDATE users SET latest_mid = %s WHERE username = %s".replace('%s', self.sql_char),
-                       (int(latest_mid), username))
+        cursor.execute("UPDATE new_messages SET latest_mid = %s WHERE username = %s AND gid = %s".replace('%s', self.sql_char),
+                       (int(latest_mid), username, gid))
         self.cursor_finish(cursor)
         return self.make_result(0)
 
@@ -497,6 +508,7 @@ class DataBase:
 
         }
         # if len(data) == 0:
+
 
 def module_test():
     db = DataBase()
@@ -530,11 +542,13 @@ def MiniTest():
     db.db_init()
     db.create_user("Lance", "")
     _au = json.loads(db.create_auth("Lance", ""))['data']['auth']
-    print(db.user_get_latest_mid(auth=_au))
-    print(db.have_read(_au, 1))
-    print(db.user_get_latest_mid(auth=_au))
+
     _gid = db.create_room(_au, "TEST GROUP")
     print(db.room_join_in(_au, _gid))
+
+    print(db.user_get_latest_mid(auth=_au))
+    print(db.have_read(_au, _gid, 1))
+    print(db.user_get_latest_mid(auth=_au))
 
 
 if __name__ == '__main__':

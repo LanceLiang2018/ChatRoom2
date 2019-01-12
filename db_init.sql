@@ -10,10 +10,16 @@ CREATE TABLE users (
     email VARCHAR(512),
     -- 头像
     head VARCHAR(512),
-    -- 最新消息
-    latest_mid INT,
+    -- 拥有的群组，是一个字符串，以‘ ’为分界
+    --groups VARCHAR(2048),
     -- 用户状态：在线(Online(1))或者下线(Offline(0))
     status INT
+);
+
+CREATE TABLE new_messages (
+    username VARCHAR(64),
+    gid INT,
+    latest_mid INT
 );
 
 -- 维护用表
@@ -70,6 +76,4 @@ CREATE TABLE info (
 CREATE TABLE members (
     gid INT,
     username VARCHAR(256)
---INSERT INTO info (gid, name, create_time, member_number, last_post_time) VALUES (0, 'New group', '', 0, '')
---INSERT INTO message (gid, uid, username, head, type, text) VALUES (0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s=512', 'text', 'Welcome to this group!')
 );
