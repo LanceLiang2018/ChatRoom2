@@ -9,11 +9,18 @@ CREATE TABLE users (
     name VARCHAR(512),
     email VARCHAR(512),
     -- 头像
-    head VARCHAR(512),
+    head VARCHAR(2048),
     -- 拥有的群组，是一个字符串，以‘ ’为分界
     --groups VARCHAR(2048),
+    motto VARCHAR(8192),
     -- 用户状态：在线(Online(1))或者下线(Offline(0))
     status INT
+);
+
+CREATE TABLE files (
+    username VARCHAR(64),
+    url VARCHAR(2048),
+    filename VARCHAR(2048)
 );
 
 CREATE TABLE new_messages (
@@ -50,11 +57,11 @@ CREATE TABLE message (
     -- 重要：gid，表明所属以便SELECT
     gid INT,
     username VARCHAR(512),
-    head VARCHAR(128),
+    head VARCHAR(2048),
     -- 类型：{'text', 'image', 'file'}
     type VARCHAR(32),
     -- 不一定是文本内容。如果是image或者file，将包含一个链接。
-    text VARCHAR(8192),
+    text VARCHAR(10240),
     send_time INT
 );
 

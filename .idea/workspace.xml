@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/Administrator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/Administrator.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data_sql.db" beforeDir="false" afterPath="$PROJECT_DIR$/data_sql.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db_init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db_init.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -62,24 +64,36 @@
     <session id="-1440046748">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="1" />
+          <entry key="project.closed" value="3" />
           <entry key="project.open.time.4" value="1" />
+          <entry key="project.open.time.51" value="1" />
           <entry key="project.open.time.65" value="1" />
-          <entry key="project.opened" value="2" />
+          <entry key="project.open.time.92" value="1" />
+          <entry key="project.opened" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="765" />
-          <entry key="sql" value="35" />
-          <entry key="txt" value="16" />
+          <entry key="py" value="3691" />
+          <entry key="sql" value="177" />
+          <entry key="txt" value="50" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="16" />
-          <entry key="Python" value="765" />
-          <entry key="SQL" value="35" />
+          <entry key="PLAIN_TEXT" value="50" />
+          <entry key="Python" value="3691" />
+          <entry key="SQL" value="177" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="py" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Python" value="1" />
         </counts>
       </usages-collector>
     </session>
@@ -89,38 +103,18 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="499" lean-forward="true" selection-start-line="499" selection-end-line="499" />
+            <state relative-caret-position="189">
+              <caret line="638" column="8" lean-forward="true" selection-start-line="638" selection-start-column="8" selection-end-line="638" selection-end-column="8" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
-                <marker date="1546764826111" expanded="true" signature="18067:18357" ph="..." />
-                <marker date="1546764826111" expanded="true" signature="20395:20736" ph="..." />
+                <marker date="1547368109983" expanded="true" signature="191:193" ph="..." />
+                <marker date="1547368109983" expanded="true" signature="19469:20126" ph="..." />
+                <marker date="1547368109983" expanded="true" signature="21766:21769" ph="..." />
+                <marker date="1547368109983" expanded="true" signature="22837:22870" ph="..." />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cos_tester.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="503">
-              <caret line="20" column="5" lean-forward="true" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
-              <folding>
-                <element signature="e#0#32#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-            <state split_layout="SPLIT">
-              <first_editor />
-              <second_editor />
             </state>
           </provider>
         </entry>
@@ -128,19 +122,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/db_init.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
-              <caret line="41" column="16" lean-forward="true" selection-start-line="41" selection-start-column="16" selection-end-line="41" selection-end-column="16" />
+            <state relative-caret-position="216">
+              <caret line="22" column="26" selection-start-line="22" selection-start-column="26" selection-end-line="22" selection-end-column="26" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/manage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="15" column="28" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
+            <state relative-caret-position="135">
+              <caret line="278" column="26" lean-forward="true" selection-start-line="278" selection-start-column="26" selection-end-line="278" selection-end-column="26" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
+                <marker date="1547369025682" expanded="true" signature="6369:7848" ph="..." />
               </folding>
             </state>
           </provider>
@@ -157,9 +152,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>return</find>
-      <find>return 'Success'</find>
-      <find>return &quot;Success&quot;</find>
       <find>get_all</find>
       <find>_info</find>
       <find>update_last_uid</find>
@@ -187,6 +179,9 @@
       <find>check_in</find>
       <find>result=</find>
       <find>create_user</find>
+      <find>T2</find>
+      <find>.replace</find>
+      <find>lower</find>
     </findStrings>
     <replaceStrings>
       <replace>INT</replace>
@@ -220,9 +215,9 @@
         <option value="$PROJECT_DIR$/room_init.sql" />
         <option value="$PROJECT_DIR$/cos_tester.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/manage.py" />
         <option value="$PROJECT_DIR$/db_init.sql" />
         <option value="$PROJECT_DIR$/database.py" />
+        <option value="$PROJECT_DIR$/manage.py" />
       </list>
     </option>
   </component>
@@ -238,11 +233,24 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="ChatRoom2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ChatRoom2" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -256,7 +264,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.database">
+  <component name="RunManager" selected="Python.manage">
     <configuration name="cos_tester" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="ChatRoom2" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -349,8 +357,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.database" />
         <item itemvalue="Python.manage" />
+        <item itemvalue="Python.database" />
         <item itemvalue="Python.cos_tester" />
         <item itemvalue="Python.postgres_test" />
       </list>
@@ -451,7 +459,14 @@
       <option name="project" value="LOCAL" />
       <updated>1546328719503</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Has New Message">
+      <created>1546764853221</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1546764853221</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TodoView">
@@ -467,13 +482,13 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49836066" weight="0.24925596" />
-      <window_info id="Structure" order="1" sideWeight="0.50163937" side_tool="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4939173" weight="0.24925596" />
+      <window_info id="Structure" order="1" sideWeight="0.5060827" side_tool="true" weight="0.24925596" />
       <window_info id="Favorites" order="2" side_tool="true" weight="0.3296131" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49936628" visible="true" weight="0.3262295" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39755768" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49936628" visible="true" weight="0.32512316" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39737275" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3283582" />
@@ -530,7 +545,8 @@
     <MESSAGE value="Add Time" />
     <MESSAGE value="Well...Done..." />
     <MESSAGE value="Switch to PostgreSQL" />
-    <option name="LAST_COMMIT_MESSAGE" value="Switch to PostgreSQL" />
+    <MESSAGE value="Has New Message" />
+    <option name="LAST_COMMIT_MESSAGE" value="Has New Message" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://E:/chatroom-new/chatroom/sever.py" />
@@ -568,6 +584,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/cos_tester.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -581,41 +607,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/manage.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="15" column="28" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cos_tester.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="503">
-          <caret line="20" column="5" lean-forward="true" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/db_init.sql">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="41" column="16" lean-forward="true" selection-start-line="41" selection-start-column="16" selection-end-line="41" selection-end-column="16" />
+        <state relative-caret-position="216">
+          <caret line="22" column="26" selection-start-line="22" selection-start-column="26" selection-end-line="22" selection-end-column="26" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="499" lean-forward="true" selection-start-line="499" selection-end-line="499" />
+        <state relative-caret-position="189">
+          <caret line="638" column="8" lean-forward="true" selection-start-line="638" selection-start-column="8" selection-end-line="638" selection-end-column="8" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <marker date="1546764826111" expanded="true" signature="18067:18357" ph="..." />
-            <marker date="1546764826111" expanded="true" signature="20395:20736" ph="..." />
+            <marker date="1547368109983" expanded="true" signature="191:193" ph="..." />
+            <marker date="1547368109983" expanded="true" signature="19469:20126" ph="..." />
+            <marker date="1547368109983" expanded="true" signature="21766:21769" ph="..." />
+            <marker date="1547368109983" expanded="true" signature="22837:22870" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="278" column="26" lean-forward="true" selection-start-line="278" selection-start-column="26" selection-end-line="278" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <marker date="1547369025682" expanded="true" signature="6369:7848" ph="..." />
           </folding>
         </state>
       </provider>

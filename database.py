@@ -6,7 +6,7 @@ import json
 
 
 def get_head(email):
-    return 'https://s.gravatar.com/avatar/' + hashlib.md5(email.encode()).hexdigest() + '?s=144'
+    return 'https://s.gravatar.com/avatar/' + hashlib.md5(email.lower().encode()).hexdigest() + '?s=144'
 
 
 class DataBase:
@@ -15,18 +15,18 @@ class DataBase:
         self.file_room_init = "room_init.sql"
         self.secret = "This program is owned by Lance."
 
-        self.error_preview = "Error."
+        self.error_preview = "发生错误："
         self.success = 'Success.'
 
         self.error = {
             "Success": "%s" % self.success,
             "Error": "%s" % self.error_preview,
-            "Auth": "%s Auth Error." % self.error_preview,
-            "RoomNumber": "%s Room Error. Room number error." % self.error_preview,
-            "NotIn": "%s Room Error. You are not in this group." % self.error_preview,
-            "NoUser": "%s No such of user." % self.error_preview,
-            "UserExist": "%s User exists." % self.error_preview,
-            "Password": "%s Password Error." % self.error_preview,
+            "Auth": "%s Auth 错误，请重新登录。" % self.error_preview,
+            "RoomNumber": "%s 房间号错误。" % self.error_preview,
+            "NotIn": "%s 你不在此房间内。" % self.error_preview,
+            "NoUser": "%s 没有这个用户。" % self.error_preview,
+            "UserExist": "%s 用户已存在。" % self.error_preview,
+            "Password": "%s 密码错误。" % self.error_preview,
         }
         self.errors = {
             "Success": str(0),
@@ -50,7 +50,7 @@ class DataBase:
         }
         self.tables = ['users', 'maintain', 'auth',
                        'message', 'info', 'members',
-                       'new_messages']
+                       'new_messages', 'files']
 
         # self.sql_type = "PostgreSQL"
         self.sql_types = {"SQLite": 0, "PostgreSQL": 1}
@@ -60,6 +60,9 @@ class DataBase:
         self.sql_char = self.sql_chars[self.sql_type]
 
         self.connect_init()
+
+    def L(self, string: str):
+        return string.replace('%s', self.sql_char)
 
     def connect_init(self):
         if self.sql_type == self.sql_types['SQLite']:
@@ -115,7 +118,7 @@ class DataBase:
         last_uid = self.get_last_uid()
         # 更新last_uid
         last_uid = last_uid + 1
-        cursor.execute("UPDATE maintain SET last_uid = %s WHERE flag = %s".replace('%s', self.sql_char), (last_uid, "FLAG"))
+        cursor.execute(self.L("UPDATE maintain SET last_uid = %s WHERE flag = %s"), (last_uid, "FLAG"))
         self.cursor_finish(cursor)
         return last_uid
 
@@ -124,7 +127,7 @@ class DataBase:
         last_gid = self.get_last_gid()
         # 更新last_gid
         last_gid = last_gid + 1
-        cursor.execute("UPDATE maintain SET last_gid = %s WHERE flag = %s".replace('%s', self.sql_char), (last_gid, "FLAG"))
+        cursor.execute(self.L("UPDATE maintain SET last_gid = %s WHERE flag = %s"), (last_gid, "FLAG"))
         self.cursor_finish(cursor)
         return last_gid
 
@@ -133,7 +136,7 @@ class DataBase:
         last_mid = self.get_last_mid()
         # 更新last_mid
         last_mid = last_mid + 1
-        cursor.execute("UPDATE maintain SET last_mid = %s WHERE flag = %s".replace('%s', self.sql_char), (last_mid, "FLAG"))
+        cursor.execute(self.L("UPDATE maintain SET last_mid = %s WHERE flag = %s"), (last_mid, "FLAG"))
         self.cursor_finish(cursor)
         return last_mid
 
@@ -181,18 +184,18 @@ class DataBase:
         cursor = self.cursor_get()
         cursor.execute("SELECT username FROM members")
         member_number = len(cursor.fetchall()[0])
-        cursor.execute("UPDATE info SET member_number = %s WHERE gid = %s".replace('%s', self.sql_char), (member_number, gid))
+        cursor.execute(self.L("UPDATE info SET member_number = %s WHERE gid = %s"), (member_number, gid))
         self.cursor_finish(cursor)
 
     def room_init(self):
         cursor = self.cursor_get()
         last_gid = self.update_last_gid()
 
-        cursor.execute("INSERT INTO info (gid, name, create_time, member_number, last_post_time) "
-                       "VALUES (%s, %s, %s, %s, %s)".replace('%s', self.sql_char), (last_gid, 'New Group', int(time.time()), 0, int(time.time())))
-        cursor.execute("INSERT INTO message (gid, mid, uid, username, head, type, text, send_time) VALUES "
-                       "(%s, 0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s".replace('%s', self.sql_char) +
-                       "=512', 'text',  %s, %s)".replace('%s', self.sql_char), (last_gid, "Welcome to this room!", int(time.time())))
+        cursor.execute(self.L("INSERT INTO info (gid, name, create_time, member_number, last_post_time) "
+                       "VALUES (%s, %s, %s, %s, %s)"), (last_gid, 'New Group', int(time.time()), 0, int(time.time())))
+        cursor.execute(self.L("INSERT INTO message (gid, mid, uid, username, head, type, text, send_time) VALUES "
+                       "(%s, 0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s") +
+                       self.L("=512', 'text',  %s, %s)"), (last_gid, "Welcome to this room!", int(time.time())))
 
         self.cursor_finish(cursor)
         # 返回这次建立的gid
@@ -209,7 +212,7 @@ class DataBase:
 
         # 设置本群基本信息
         cursor = self.cursor_get()
-        cursor.execute('UPDATE info SET name = %s, create_time = %s, last_post_time = %s WHERE gid = %s'.replace('%s', self.sql_char),
+        cursor.execute(self.L('UPDATE info SET name = %s, create_time = %s, last_post_time = %s WHERE gid = %s'),
                        (name, int(time.time()), int(time.time()), gid))
         self.cursor_finish(cursor)
 
@@ -222,13 +225,13 @@ class DataBase:
         # 检查房间存在
         if self.room_check_exist(gid) is False:
             return self.make_result(self.errors["RoomNumber"])
-        if self.room_check_in(auth, gid) is False:
-            return self.make_result(self.errors["NotIn"])
+        if self.room_check_in(auth, gid) is True:
+            return self.make_result(0)
         cursor = self.cursor_get()
         username = self.auth2username(auth)
-        cursor.execute("INSERT INTO members (gid, username) VALUES (%s, %s)".replace('%s', self.sql_char),
+        cursor.execute(self.L("INSERT INTO members (gid, username) VALUES (%s, %s)"),
                        (gid, username))
-        cursor.execute("INSERT INTO new_messages (gid, username, latest_mid) VALUES (%s, %s, %s)".replace('%s', self.sql_char),
+        cursor.execute(self.L("INSERT INTO new_messages (gid, username, latest_mid) VALUES (%s, %s, %s)"),
                        (gid, username, 0))
         self.cursor_finish(cursor)
         self.room_update_number(gid)
@@ -241,7 +244,7 @@ class DataBase:
         if self.room_check_exist(gid) is False:
             return self.make_result(self.errors["RoomNumber"])
         cursor = self.cursor_get()
-        cursor.execute("UPDATE info SET name = %s WHERE gid = %s".replace('%s', self.sql_char), (name, gid))
+        cursor.execute(self.L("UPDATE info SET name = %s WHERE gid = %s"), (name, gid))
         self.cursor_finish(cursor)
         return self.make_result(0)
 
@@ -251,7 +254,7 @@ class DataBase:
         if self.room_check_exist(gid) is False:
             return self.make_result(self.errors["RoomNumber"])
         cursor = self.cursor_get()
-        cursor.execute("SELECT username FROM members WHERE gid = %s".replace('%s', self.sql_char), (gid, ))
+        cursor.execute(self.L("SELECT username FROM members WHERE gid = %s"), (gid, ))
         data = cursor.fetchall()
         data = list(map(lambda x: x[0], data))
         heads = []
@@ -267,7 +270,7 @@ class DataBase:
     # 房间号→Name
     def number2name(self, gid):
         cursor = self.cursor_get()
-        cursor.execute("SELECT name FROM info WHERE gid = %s".replace('%s', self.sql_char), (gid, ))
+        cursor.execute(self.L("SELECT name FROM info WHERE gid = %s"), (gid, ))
         name = cursor.fetchall()[0][0]
         cursor.close()
         self.cursor_finish(cursor)
@@ -278,8 +281,8 @@ class DataBase:
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         cursor = self.cursor_get()
-        cursor.execute("SELECT name, create_time, member_number, last_post_time "
-                       "FROM info WHERE gid = %s".replace('%s', self.sql_char), (gid, ))
+        cursor.execute(self.L("SELECT name, create_time, member_number, last_post_time "
+                       "FROM info WHERE gid = %s"), (gid, ))
         data = cursor.fetchall()[0]
         self.cursor_finish(cursor)
 
@@ -291,7 +294,7 @@ class DataBase:
 
     # 默认：password为空，name和email默认
     def create_user(self, username='Lance', password='', name='Nickname',
-                    email='lanceliang2018@163.com'):
+                    email='lanceliang2018@163.com', motto=''):
         if self.check_in("users", "username", username):
             return self.make_result(self.errors["UserExist"])
 
@@ -299,12 +302,10 @@ class DataBase:
         last_uid = self.update_last_uid()
 
         password = hashlib.md5(password.encode()).hexdigest()
-        email = email.lower()
         head = get_head(email)
-        cursor.execute("INSERT INTO users "
-                       "(uid, username, password, name, email, head) "
-                       "VALUES (%s, %s, %s, %s, %s, %s)".replace('%s', self.sql_char),
-                       (last_uid, username, password, name, email, head))
+        cursor.execute(self.L("INSERT INTO users "
+                       "(uid, username, password, name, email, head, motto) VALUES (%s, %s, %s, %s, %s, %s, %s)"),
+                       (last_uid, username, password, name, email, head, motto))
 
         self.update_last_uid()
         self.cursor_finish(cursor)
@@ -316,7 +317,7 @@ class DataBase:
             return False
         cursor = self.cursor_get()
         password = hashlib.md5(password.encode()).hexdigest()
-        cursor.execute("SELECT password FROM users WHERE username = %s".replace('%s', self.sql_char), (username, ))
+        cursor.execute(self.L("SELECT password FROM users WHERE username = %s"), (username, ))
         data = cursor.fetchall()
         if len(data) == 0:
             return False
@@ -332,7 +333,7 @@ class DataBase:
             # return self.make_result(self.errors["NoUser"])
             return ""
         cursor = self.cursor_get()
-        cursor.execute("SELECT head FROM users WHERE username = %s".replace('%s', self.sql_char), (username, ))
+        cursor.execute(self.L("SELECT head FROM users WHERE username = %s"), (username, ))
         head = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
         return head
@@ -346,9 +347,9 @@ class DataBase:
         auth = hashlib.md5(string.encode()).hexdigest()
 
         if self.check_in("auth", "username", username):
-            cursor.execute("UPDATE auth SET auth = %s WHERE username = %s".replace('%s', self.sql_char), (auth, username))
+            cursor.execute(self.L("UPDATE auth SET auth = %s WHERE username = %s"), (auth, username))
         else:
-            cursor.execute("INSERT INTO auth (username, auth) VALUES (%s, %s)".replace('%s', self.sql_char), (username, auth))
+            cursor.execute(self.L("INSERT INTO auth (username, auth) VALUES (%s, %s)"), (username, auth))
 
         self.cursor_finish(cursor)
         head = self.get_head(auth)
@@ -364,7 +365,7 @@ class DataBase:
         if self.check_auth(auth) is False:
             return 'No_User'
         cursor = self.cursor_get()
-        cursor.execute("SELECT username FROM auth WHERE auth = %s".replace('%s', self.sql_char), (auth,))
+        cursor.execute(self.L("SELECT username FROM auth WHERE auth = %s"), (auth,))
         username = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
         return username
@@ -374,7 +375,7 @@ class DataBase:
             return ""
         username = self.auth2username(auth)
         cursor = self.cursor_get()
-        cursor.execute("SELECT head FROM users WHERE username = %s".replace('%s', self.sql_char), (username, ))
+        cursor.execute(self.L("SELECT head FROM users WHERE username = %s"), (username, ))
         head = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
         return head
@@ -383,7 +384,7 @@ class DataBase:
         # 检验是否在房间内
         username = self.auth2username(auth)
         cursor = self.cursor_get()
-        cursor.execute("SELECT username FROM members WHERE username = %s AND gid = %s".replace('%s', self.sql_char), (username, gid))
+        cursor.execute(self.L("SELECT username FROM members WHERE username = %s AND gid = %s"), (username, gid))
         data = cursor.fetchall()
         self.cursor_finish(cursor)
         if len(data) == 0:
@@ -392,7 +393,7 @@ class DataBase:
 
     def room_check_exist(self, gid):
         cursor = self.cursor_get()
-        cursor.execute("SELECT gid FROM info WHERE gid = %s".replace('%s', self.sql_char), (gid, ))
+        cursor.execute(self.L("SELECT gid FROM info WHERE gid = %s"), (gid, ))
         data = cursor.fetchall()
         self.cursor_finish(cursor)
         if len(data) == 0:
@@ -417,7 +418,7 @@ class DataBase:
 
     def room_update_active_time(self, gid):
         cursor = self.cursor_get()
-        cursor.execute("UPDATE info SET last_post_time = %s WHERE gid = %s".replace('%s', self.sql_char), (int(time.time()), gid))
+        cursor.execute(self.L("UPDATE info SET last_post_time = %s WHERE gid = %s"), (int(time.time()), gid))
         self.cursor_finish(cursor)
 
     def send_message(self, auth, gid, text, message_type='text'):
@@ -436,8 +437,8 @@ class DataBase:
         if self.room_check_exist(gid) is False:
             return self.make_result(self.errors["RoomNumber"])
         cursor = self.cursor_get()
-        cursor.execute("INSERT INTO message (mid, gid, username, head, type, text, send_time) "
-                       "VALUES (%s, %s, %s, %s, %s, %s, %s)".replace('%s', self.sql_char),
+        cursor.execute(self.L("INSERT INTO message (mid, gid, username, head, "
+                              "type, text, send_time) VALUES (%s, %s, %s, %s, %s, %s, %s)"),
                        (last_mid, gid, username, head, message_type, text, int(time.time())))
         self.cursor_finish(cursor)
 
@@ -445,7 +446,7 @@ class DataBase:
         return self.make_result(0)
 
     # 返回格式：(username, head, type, text, mid)(json)
-    def get_message(self, auth, gid, limit=30):
+    def get_message(self, auth, gid, limit=30, offset=0):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         if self.room_check_exist(gid) is False:
@@ -456,9 +457,31 @@ class DataBase:
         cursor = self.cursor_get()
         result = []
         unit_ = {}
-        cursor.execute("SELECT mid, username, head, type, text, send_time FROM message "
-                       "WHERE gid = %s ORDER BY mid DESC LIMIT %s".replace('%s', self.sql_char),
-                       (gid, limit))
+        cursor.execute(self.L("SELECT mid, username, head, type, text, send_time FROM message "
+                       "WHERE gid = %s ORDER BY mid DESC LIMIT %s OFFSET %s"),
+                       (gid, limit, offset))
+        data = cursor.fetchall()
+        for d in data:
+            unit_['mid'], unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
+            result.append(copy.deepcopy(unit_))
+        self.cursor_finish(cursor)
+        return self.make_result(0, message=result)
+
+    # 返回格式：(username, head, type, text, mid)(json)
+    def get_new_message(self, auth, gid, limit: int=30, since: int=0):
+        if self.check_auth(auth) is False:
+            return self.make_result(self.errors["Auth"])
+        if self.room_check_exist(gid) is False:
+            return self.make_result(self.errors["RoomNumber"])
+        # if self.room_check_in(auth, gid) is False:
+        #     return self.make_result(self.errors["NotIn"])
+
+        cursor = self.cursor_get()
+        result = []
+        unit_ = {}
+        cursor.execute(self.L("SELECT mid, username, head, type, text, send_time FROM message "
+                       "WHERE gid = %s AND mid > %s ORDER BY mid DESC LIMIT %s"),
+                       (gid, since, limit))
         data = cursor.fetchall()
         for d in data:
             unit_['mid'], unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
@@ -472,8 +495,8 @@ class DataBase:
         if username is None:
             username = self.auth2username(auth)
         cursor = self.cursor_get()
-        cursor.execute("SELECT gid, latest_mid FROM new_messages "
-                       "WHERE username = %s".replace('%s', self.sql_char),
+        cursor.execute(self.L("SELECT gid, latest_mid FROM new_messages "
+                       "WHERE username = %s"),
                        (username, ))
         data = cursor.fetchall()
         cursor.close()
@@ -482,32 +505,56 @@ class DataBase:
             result.append({"gid": d[0], "latest_mid": d[1]})
         return self.make_result(0, new_messages=result)
 
+    def user_set_info(self, auth, head: str=None, motto: str=None, email: str=None):
+        if self.check_auth(auth) is False:
+            return self.make_result(self.errors["Auth"])
+        cursor = self.cursor_get()
+        username = self.auth2username(auth)
+        if head is not None:
+            cursor.execute(self.L("UPDATE users SET head = %s WHERE username = %s"), (head, username))
+        if motto is not None:
+            cursor.execute(self.L("UPDATE users SET motto = %s WHERE username = %s"), (motto, username))
+        if email is not None:
+            cursor.execute(self.L("UPDATE users SET email = %s WHERE username = %s"), (email, username))
+        self.cursor_finish(cursor)
+        return self.make_result(0)
+
     def have_read(self, auth, gid, latest_mid):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         username = self.auth2username(auth)
 
         cursor = self.cursor_get()
-        cursor.execute("UPDATE new_messages SET latest_mid = %s WHERE username = %s AND gid = %s".replace('%s', self.sql_char),
+        cursor.execute(self.L("UPDATE new_messages SET latest_mid = %s WHERE username = %s AND gid = %s"),
                        (int(latest_mid), username, gid))
         self.cursor_finish(cursor)
         return self.make_result(0)
 
-    def has_new_message(self, auth, gid):
+    def file_upload(self, auth, filename: str='FILE', url: str=''):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         username = self.auth2username(auth)
-
         cursor = self.cursor_get()
-        cursor.execute("SELECT mid FROM message "
-                       "WHERE gid = %s ORDER BY mid DESC LIMIT %s".replace('%s', self.sql_char),
-                       (gid, 1))
+        cursor.execute(self.L("INSERT INTO files (username, filename, url) VALUES (%s, %s, %s)"),
+                       (username, filename, url))
+        self.cursor_finish(cursor)
+        return self.make_result(0)
+
+    def file_get(self, auth, limit: int=30, offset: int=0):
+        if self.check_auth(auth) is False:
+            return self.make_result(self.errors["Auth"])
+        username = self.auth2username(auth)
+        cursor = self.cursor_get()
+        cursor.execute(self.L("SELECT DISTINCT username, filename, url FROM files "
+                              "WHERE username = %s "
+                              "LIMIT %s OFFSET %s"),
+                       (username, limit, offset))
         data = cursor.fetchall()
         self.cursor_finish(cursor)
-        result = {
-
-        }
-        # if len(data) == 0:
+        result = []
+        for d in data:
+            result.append({'username': d[0], 'filename': d[1], 'url': d[2]})
+        return self.make_result(0, files=result)
 
 
 def module_test():
@@ -537,6 +584,10 @@ def module_test():
     print(db.room_get_members(_au, _gid))
 
 
+def jsonify(string: str):
+    return json.loads(string)
+
+
 def MiniTest():
     db = DataBase()
     db.db_init()
@@ -544,11 +595,53 @@ def MiniTest():
     _au = json.loads(db.create_auth("Lance", ""))['data']['auth']
 
     _gid = db.create_room(_au, "TEST GROUP")
-    print(db.room_join_in(_au, _gid))
+    print('join in', db.room_join_in(_au, _gid))
 
-    print(db.user_get_latest_mid(auth=_au))
-    print(db.have_read(_au, _gid, 1))
-    print(db.user_get_latest_mid(auth=_au))
+    '''
+
+    print('send message', db.send_message(_au, _gid, "TEXT", "text"))
+
+    res = jsonify(db.get_message(_au, _gid))
+    print('get message', res)
+    length = len(res['data']['message'])
+    print('got', length, 'message(s)')
+
+    res = jsonify(db.user_get_latest_mid(auth=_au))
+    print('get latest mid', res)
+    latest = 0
+    for r in res['data']['new_messages']:
+        rdata = jsonify(db.get_message(_au, _gid))
+        for rd in rdata['data']['message']:
+            latest = max(latest, rd['mid'])
+        print('gid:', r['gid'], rdata['data']['message'])
+
+    print('have read', db.have_read(_au, _gid, latest))
+    print('now get latest mid', db.user_get_latest_mid(auth=_au))
+
+    print('#' * 30)
+    print('send new message', db.send_message(_au, _gid, "T2", "text"))
+
+    res = jsonify(db.get_message(_au, _gid))
+    print('get message', res)
+    length = len(res['data']['message'])
+    print('got', length, 'message(s)')
+
+    res = jsonify(db.user_get_latest_mid(auth=_au))
+    print('get latest mid', res)
+
+    for r in res['data']['new_messages']:
+        rdata = jsonify(db.get_new_message(_au, _gid, since=latest))
+        for rd in rdata['data']['message']:
+            latest = max(latest, rd['mid'])
+        print('gid:', r['gid'], rdata['data']['message'])
+
+    print('have read', db.have_read(_au, _gid, latest))
+    print('now get latest mid', db.user_get_latest_mid(auth=_au))
+    
+    '''
+
+    print('put file', db.file_upload(_au, filename='NAME', url='NONE'))
+    print('get file', db.file_get(_au))
 
 
 if __name__ == '__main__':

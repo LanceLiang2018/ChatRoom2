@@ -34,15 +34,21 @@ def delete_dir(_dir):
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    # return "This is a server for Chat Room 2."
-    res = '###### manage.py:\n'
-    with open('manage.py', 'r', encoding='utf8') as f:
-        res = res + f.read()
-    res = res + "###### database.py\n"
-    with open('database.py', 'r', encoding='utf8') as f:
-        res = res + f.read()
-    res = res + '\n\n##### End of files.\n'
-    return res
+    """
+        res = '###### manage.py:\n'
+        with open('manage.py', 'r', encoding='utf8') as f:
+            res = res + f.read()
+        res = res + "###### database.py\n"
+        with open('database.py', 'r', encoding='utf8') as f:
+            res = res + f.read()
+        res = res + '\n\n##### End of files.\n'
+        return res
+    """
+    return \
+        "<title>Chat 2 Server</title>" \
+        "<h1>It is a server for Chat 2! <br>@LanceLiang2018</h1><br>" \
+        "<a href=\"http://github.com/LanceLiang2018/ChatRoom2/\">About (Server)</a><br>" \
+        "<a href=\"http://github.com/LanceLiang2018/Chat2-Android/\">About (Client)</a>"
 
 
 @app.route('/get_head', methods=["POST"])
@@ -57,24 +63,6 @@ def get_head():
     username = db.auth2username(auth)
     head = db.get_head(auth)
     return db.make_result(0, username=username, head=head)
-
-
-@app.route('/get_message', methods=["POST", "GET"])
-def get_message():
-    form = request.form
-    try:
-        auth = form['auth']
-        gid = int(form['gid'])
-        limit = 30
-
-        # print(auth, gid, limit)
-        if 'limit' in form:
-            limit = int(form['limit'])
-    except Exception as e:
-        return db.make_result(1, message=str(e))
-    data = db.get_message(auth, gid, limit=limit)
-    print('get_message():', data)
-    return data
 
 
 @app.route('/login', methods=["POST"])
@@ -213,12 +201,13 @@ def clear_all():
 def upload():
     try:
         auth = request.form['auth']
+        filename = request.form['filename']
         if db.check_auth(auth) is False:
             return db.make_result(2)
         data = request.form['data']
         data = base64.b64decode(data)
-        md5 = hashlib.md5(data).hexdigest()
-        filename = "%s" % md5
+        # md5 = hashlib.md5(data).hexdigest()
+        # filename = "%s" % md5
         response = client.put_object(
             Bucket=bucket,
             Body=data,
@@ -228,10 +217,70 @@ def upload():
             # 我自己算吧......
         )
         print(response)
-        return db.make_result(0, filename=filename, md5=md5, etag=response['ETag'][1:-1],
-                              url='https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename))
+        url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename)
+        result = {
+            'filename': filename, 'etag': response['ETag'][1:-1],
+            "url": url
+        }
     except Exception as e:
         return db.make_result(1, message=str(e))
+    return db.file_upload(auth, filename, url)
+
+
+@app.route('/file_get', methods=["POST"])
+def file_get():
+    form = request.form
+    try:
+        auth = form['auth']
+        limit = 30
+        offset = 0
+        if 'limit' in form:
+            limit = int(form['limit'])
+        if 'offset' in form:
+            offset = int(form['offset'])
+    except Exception as e:
+        return db.make_result(1, message=str(e))
+    res = db.file_get(auth, limit, offset)
+    return res
+
+
+@app.route('/get_message', methods=["POST", "GET"])
+def get_message():
+    form = request.form
+    try:
+        auth = form['auth']
+        gid = int(form['gid'])
+        limit = 30
+        offset = 0
+        # print(auth, gid, limit)
+        if 'limit' in form:
+            limit = int(form['limit'])
+        if 'offset' in form:
+            offset = int(form['offset'])
+    except Exception as e:
+        return db.make_result(1, message=str(e))
+    data = db.get_message(auth, gid, limit=limit, offset=offset)
+    print('get_message():', data)
+    return data
+
+
+@app.route('/get_new_message', methods=["POST", "GET"])
+def get_new_message():
+    form = request.form
+    try:
+        auth = form['auth']
+        gid = int(form['gid'])
+        since = 0
+        limit = 30
+        if 'limit' in form:
+            limit = int(form['limit'])
+        if 'since' in form:
+            since = int(form['since'])
+    except Exception as e:
+        return db.make_result(1, message=str(e))
+    data = db.get_new_message(auth, gid, limit=limit, since=since)
+    print('get_new_message():', data)
+    return data
 
 
 if __name__ == '__main__':

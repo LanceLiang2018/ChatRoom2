@@ -3,6 +3,7 @@
     <words>
       <w>asctime</w>
       <w>dirname</w>
+      <w>jsonify</w>
       <w>postgre</w>
     </words>
   </dictionary>
