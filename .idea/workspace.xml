@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/Administrator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/Administrator.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_sql.db" beforeDir="false" afterPath="$PROJECT_DIR$/data_sql.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db_init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db_init.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,12 +72,12 @@
         <counts>
           <entry key="py" value="3691" />
           <entry key="sql" value="177" />
-          <entry key="txt" value="50" />
+          <entry key="txt" value="64" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="50" />
+          <entry key="PLAIN_TEXT" value="64" />
           <entry key="Python" value="3691" />
           <entry key="SQL" value="177" />
         </counts>
@@ -103,17 +99,17 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="638" column="8" lean-forward="true" selection-start-line="638" selection-start-column="8" selection-end-line="638" selection-end-column="8" />
+            <state relative-caret-position="162">
+              <caret line="57" column="44" lean-forward="true" selection-start-line="57" selection-start-column="44" selection-end-line="57" selection-end-column="44" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
-                <marker date="1547368109983" expanded="true" signature="191:193" ph="..." />
-                <marker date="1547368109983" expanded="true" signature="19469:20126" ph="..." />
-                <marker date="1547368109983" expanded="true" signature="21766:21769" ph="..." />
-                <marker date="1547368109983" expanded="true" signature="22837:22870" ph="..." />
+                <marker date="1547369306114" expanded="true" signature="191:193" ph="..." />
+                <marker date="1547369306114" expanded="true" signature="19469:20126" ph="..." />
+                <marker date="1547369306114" expanded="true" signature="21766:21769" ph="..." />
+                <marker date="1547369306114" expanded="true" signature="22837:22870" ph="..." />
               </folding>
             </state>
           </provider>
@@ -128,11 +124,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/manage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="278" column="26" lean-forward="true" selection-start-line="278" selection-start-column="26" selection-end-line="278" selection-end-column="26" />
+            <state relative-caret-position="27">
+              <caret line="13" column="47" lean-forward="true" selection-start-line="13" selection-start-column="47" selection-end-line="13" selection-end-column="47" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
                 <marker date="1547369025682" expanded="true" signature="6369:7848" ph="..." />
@@ -216,8 +212,8 @@
         <option value="$PROJECT_DIR$/cos_tester.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/db_init.sql" />
-        <option value="$PROJECT_DIR$/database.py" />
         <option value="$PROJECT_DIR$/manage.py" />
+        <option value="$PROJECT_DIR$/database.py" />
       </list>
     </option>
   </component>
@@ -466,7 +462,14 @@
       <option name="project" value="LOCAL" />
       <updated>1546764853221</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="File manager">
+      <created>1547369077927</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1547369077927</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TodoView">
@@ -487,14 +490,14 @@
       <window_info id="Favorites" order="2" side_tool="true" weight="0.3296131" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49936628" visible="true" weight="0.32512316" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49936628" weight="0.32512316" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39737275" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3283582" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.3295082" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.32428765" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.3262295" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="9" visible="true" weight="0.32512316" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5006337" side_tool="true" weight="0.325" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -546,7 +549,8 @@
     <MESSAGE value="Well...Done..." />
     <MESSAGE value="Switch to PostgreSQL" />
     <MESSAGE value="Has New Message" />
-    <option name="LAST_COMMIT_MESSAGE" value="Has New Message" />
+    <MESSAGE value="File manager" />
+    <option name="LAST_COMMIT_MESSAGE" value="File manager" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://E:/chatroom-new/chatroom/sever.py" />
@@ -614,27 +618,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database.py">
+    <entry file="file://$PROJECT_DIR$/manage.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="638" column="8" lean-forward="true" selection-start-line="638" selection-start-column="8" selection-end-line="638" selection-end-column="8" />
+        <state relative-caret-position="27">
+          <caret line="13" column="47" lean-forward="true" selection-start-line="13" selection-start-column="47" selection-end-line="13" selection-end-column="47" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <marker date="1547368109983" expanded="true" signature="191:193" ph="..." />
-            <marker date="1547368109983" expanded="true" signature="19469:20126" ph="..." />
-            <marker date="1547368109983" expanded="true" signature="21766:21769" ph="..." />
-            <marker date="1547368109983" expanded="true" signature="22837:22870" ph="..." />
+            <element signature="e#0#19#0" expanded="true" />
+            <marker date="1547369025682" expanded="true" signature="6369:7848" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/manage.py">
+    <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="278" column="26" lean-forward="true" selection-start-line="278" selection-start-column="26" selection-end-line="278" selection-end-column="26" />
+        <state relative-caret-position="162">
+          <caret line="57" column="44" lean-forward="true" selection-start-line="57" selection-start-column="44" selection-end-line="57" selection-end-column="44" />
           <folding>
-            <element signature="e#0#19#0" expanded="true" />
-            <marker date="1547369025682" expanded="true" signature="6369:7848" ph="..." />
+            <element signature="e#0#14#0" expanded="true" />
+            <marker date="1547369306114" expanded="true" signature="191:193" ph="..." />
+            <marker date="1547369306114" expanded="true" signature="19469:20126" ph="..." />
+            <marker date="1547369306114" expanded="true" signature="21766:21769" ph="..." />
+            <marker date="1547369306114" expanded="true" signature="22837:22870" ph="..." />
           </folding>
         </state>
       </provider>
