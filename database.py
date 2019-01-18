@@ -462,6 +462,7 @@ class DataBase:
                        (gid, limit, offset))
         data = cursor.fetchall()
         for d in data:
+            unit_['gid'] = int(gid)
             unit_['mid'], unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
             result.append(copy.deepcopy(unit_))
         self.cursor_finish(cursor)
@@ -484,6 +485,7 @@ class DataBase:
                        (gid, since, limit))
         data = cursor.fetchall()
         for d in data:
+            unit_['gid'] = int(gid)
             unit_['mid'], unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
             result.append(copy.deepcopy(unit_))
         self.cursor_finish(cursor)

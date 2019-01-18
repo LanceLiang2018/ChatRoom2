@@ -206,25 +206,31 @@ def upload():
             return db.make_result(2)
         data = request.form['data']
         data = base64.b64decode(data)
-        # md5 = hashlib.md5(data).hexdigest()
-        # filename = "%s" % md5
+        md5 = hashlib.md5(data).hexdigest()
+        filename_md5 = "%s" % md5
         response = client.put_object(
             Bucket=bucket,
             Body=data,
-            Key=filename,
+            Key=filename_md5,
             StorageClass='STANDARD',
             EnableMD5=False
             # 我自己算吧......
         )
         print(response)
-        url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename)
+        url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename_md5)
         result = {
             'filename': filename, 'etag': response['ETag'][1:-1],
             "url": url
         }
+        print(result)
     except Exception as e:
+        print(e)
         return db.make_result(1, message=str(e))
-    return db.file_upload(auth, filename, url)
+    db.file_upload(auth, filename, url)
+    # return db.make_result(0, upload_result=result)
+    res = db.make_result(0, upload_result=result)
+    print(res)
+    return res
 
 
 @app.route('/file_get', methods=["POST"])
