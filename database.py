@@ -57,8 +57,8 @@ class DataBase:
 
         # self.sql_type = "PostgreSQL"
         self.sql_types = {"SQLite": 0, "PostgreSQL": 1}
-        self.sql_type = self.sql_types['PostgreSQL']
-        # self.sql_type = self.sql_types['SQLite']
+        # self.sql_type = self.sql_types['PostgreSQL']
+        self.sql_type = self.sql_types['SQLite']
         self.sql_chars = ["?", "%s"]
         self.sql_char = self.sql_chars[self.sql_type]
 

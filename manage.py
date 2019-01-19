@@ -1,12 +1,13 @@
-from flask import *
-from database import DataBase
 import base64
-import time
+import hashlib
 # import json
 import os
-import hashlib
+
+from flask import *
 from qcloud_cos import CosConfig
 from qcloud_cos import CosS3Client
+
+from database import DataBase
 
 secret_id = 'AKIDcq7HVrj0nlAWUYvPoslyMKKI2GNJ478z'
 secret_key = '70xZrtGAwmf6WdXGhcch3gRt7hV4SJGx'
@@ -65,6 +66,17 @@ def get_head():
     return db.make_result(0, username=username, head=head)
 
 
+@app.route('/get_head_public', methods=["POST"])
+def get_head():
+    form = request.form
+    try:
+        username = form['username']
+    except Exception as e:
+        return db.make_result(1, message=str(e))
+    head = db.get_head_public(username)
+    return db.make_result(0, username=username, head=head)
+
+
 @app.route('/login', methods=["POST"])
 def login():
     form = request.form
@@ -92,10 +104,13 @@ def send_message():
 def signup():
     form = request.form
     try:
-        username, password, name, email = form['username'], form['password'], form['name'], form['email']
+        username, password, email = form['username'], form['password'], form['email']
+        name = username
+        if 'name' in form:
+            name = form['name']
     except Exception as e:
         return db.make_result(1, message=str(e))
-    return str(db.create_user(username, password, name, email))
+    return db.create_user(username, password, name, email)
 
 
 @app.route('/beat', methods=["POST"])
@@ -132,12 +147,15 @@ def set_room_info():
     try:
         auth = form['auth']
         gid = int(form['gid'])
-        name = 'New group'
+        name = None
+        head = None
         if 'name' in form:
             name = form['name']
+        if 'head' in form:
+            head = form['head']
     except Exception as e:
         return db.make_result(1, message=str(e))
-    res = db.room_set_info(auth, gid, name)
+    res = db.room_set_info(auth, gid, name=name, head=head)
     return res
 
 
@@ -286,6 +304,18 @@ def get_new_message():
         return db.make_result(1, message=str(e))
     data = db.get_new_message(auth, gid, limit=limit, since=since)
     print('get_new_message():', data)
+    return data
+
+
+@app.route('/make_friends', methods=['POST'])
+def make_friends():
+    form = request.form
+    try:
+        auth = form['auth']
+        friend = form['friend']
+    except Exception as e:
+        return db.make_result(1, message=str(e))
+    data = db.make_friends(auth, friend)
     return data
 
 
