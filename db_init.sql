@@ -6,6 +6,7 @@ CREATE TABLE users (
     email VARCHAR(512),
     head VARCHAR(2048),
     motto VARCHAR(8192),
+    rooms VARCHAR(8192),
     status INT
 );
 
@@ -48,7 +49,9 @@ CREATE TABLE message (
 
 CREATE TABLE info (
     gid INT,
+    room_type VARCHAR(32),
     name VARCHAR(512),
+    head VARCHAR(2048),
     create_time INT,
     member_number INT,
     last_post_time INT
@@ -57,4 +60,10 @@ CREATE TABLE info (
 CREATE TABLE members (
     gid INT,
     username VARCHAR(256)
+);
+
+CREATE TABLE friends (
+    username VARCHAR(64),
+    friend VARCHAR(64),
+    gid INT
 );

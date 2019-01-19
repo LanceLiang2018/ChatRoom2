@@ -27,6 +27,7 @@ class DataBase:
             "NoUser": "%s 没有这个用户。" % self.error_preview,
             "UserExist": "%s 用户已存在。" % self.error_preview,
             "Password": "%s 密码错误。" % self.error_preview,
+            "HaveBeenFriends": "%s 你们已经是好友了。" % self.error_preview,
         }
         self.errors = {
             "Success": str(0),
@@ -37,6 +38,7 @@ class DataBase:
             "NoUser": str(5),
             "UserExist": str(6),
             "Password": str(7),
+            "HaveBeenFriends": str(8),
         }
         self.error_messages = {
             str(0): self.error["Success"],
@@ -47,15 +49,16 @@ class DataBase:
             str(5): self.error["NoUser"],
             str(6): self.error["UserExist"],
             str(7): self.error["Password"],
+            str(8): self.error["HaveBeenFriends"]
         }
         self.tables = ['users', 'maintain', 'auth',
                        'message', 'info', 'members',
-                       'new_messages', 'files']
+                       'new_messages', 'files', 'friends']
 
         # self.sql_type = "PostgreSQL"
         self.sql_types = {"SQLite": 0, "PostgreSQL": 1}
-        self.sql_type = self.sql_types['PostgreSQL']
-        # self.sql_type = self.sql_types['SQLite']
+        # self.sql_type = self.sql_types['PostgreSQL']
+        self.sql_type = self.sql_types['SQLite']
         self.sql_chars = ["?", "%s"]
         self.sql_char = self.sql_chars[self.sql_type]
 
@@ -187,12 +190,12 @@ class DataBase:
         cursor.execute(self.L("UPDATE info SET member_number = %s WHERE gid = %s"), (member_number, gid))
         self.cursor_finish(cursor)
 
-    def room_init(self):
+    def room_init(self, room_type):
         cursor = self.cursor_get()
         last_gid = self.update_last_gid()
 
-        cursor.execute(self.L("INSERT INTO info (gid, name, create_time, member_number, last_post_time) "
-                       "VALUES (%s, %s, %s, %s, %s)"), (last_gid, 'New Group', int(time.time()), 0, int(time.time())))
+        cursor.execute(self.L("INSERT INTO info (gid, name, create_time, member_number, last_post_time, room_type) "
+                       "VALUES (%s, %s, %s, %s, %s, %s)"), (last_gid, 'New Group', int(time.time()), 0, int(time.time()), room_type))
         cursor.execute(self.L("INSERT INTO message (gid, mid, uid, username, head, type, text, send_time) VALUES "
                        "(%s, 0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s") +
                        self.L("=512', 'text',  %s, %s)"), (last_gid, "Welcome to this room!", int(time.time())))
@@ -206,18 +209,35 @@ class DataBase:
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
 
-        gid = self.room_init()
+        gid = self.room_init('public')
         # 让本人加群
         self.room_join_in(auth, gid)
-
+        user_head = self.get_head(auth)
         # 设置本群基本信息
         cursor = self.cursor_get()
-        cursor.execute(self.L('UPDATE info SET name = %s, create_time = %s, last_post_time = %s WHERE gid = %s'),
-                       (name, int(time.time()), int(time.time()), gid))
+        cursor.execute(self.L('UPDATE info SET name = %s, create_time = %s, last_post_time = %s, head = %s '
+                              'WHERE gid = %s'),
+                       (name, int(time.time()), int(time.time()), user_head, gid))
         self.cursor_finish(cursor)
-
         self.room_update_active_time(gid)
+        # 返回房间号码
+        return gid
 
+    # 返回值：创建的房间号。房间号自动递增
+    def create_room_friend(self, auth, name='New group'):
+        if self.check_auth(auth) is False:
+            return self.make_result(self.errors["Auth"])
+        gid = self.room_init('private')
+        # 让本人加群
+        user_head = self.get_head(auth)
+        self.room_join_in(auth, gid)
+        # 设置本群基本信息
+        cursor = self.cursor_get()
+        cursor.execute(self.L('UPDATE info SET name = %s, create_time = %s, last_post_time = %s, head = %s '
+                              'WHERE gid = %s'),
+                       (name, int(time.time()), int(time.time()), user_head, gid))
+        self.cursor_finish(cursor)
+        self.room_update_active_time(gid)
         # 返回房间号码
         return gid
 
@@ -233,18 +253,39 @@ class DataBase:
                        (gid, username))
         cursor.execute(self.L("INSERT INTO new_messages (gid, username, latest_mid) VALUES (%s, %s, %s)"),
                        (gid, username, 0))
+        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username, ))
+        rooms = "%s %s" % (cursor.fetchall()[0][0], str(gid))
+        cursor.execute(self.L("UPDATE users SET rooms = %s WHERE username = %s"),
+                       (rooms, username))
+        self.cursor_finish(cursor)
+        self.room_update_number(gid)
+        return self.make_result(0)
+
+    def room_join_in_friend(self, friend, gid):
+        cursor = self.cursor_get()
+        cursor.execute(self.L("INSERT INTO members (gid, username) VALUES (%s, %s)"),
+                       (gid, friend))
+        cursor.execute(self.L("INSERT INTO new_messages (gid, username, latest_mid) VALUES (%s, %s, %s)"),
+                       (gid, friend, 0))
+        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (friend, ))
+        rooms = "%s %s" % (cursor.fetchall()[0][0], str(gid))
+        cursor.execute(self.L("UPDATE users SET rooms = %s WHERE username = %s"),
+                       (rooms, friend))
         self.cursor_finish(cursor)
         self.room_update_number(gid)
         return self.make_result(0)
 
     # 设置房间基本信息
-    def room_set_info(self, auth, gid, name):
+    def room_set_info(self, auth, gid, name=None, head=None):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         if self.room_check_exist(gid) is False:
             return self.make_result(self.errors["RoomNumber"])
         cursor = self.cursor_get()
-        cursor.execute(self.L("UPDATE info SET name = %s WHERE gid = %s"), (name, gid))
+        if name is not None:
+            cursor.execute(self.L("UPDATE info SET name = %s WHERE gid = %s"), (name, gid))
+        if head is not None:
+            cursor.execute(self.L("UPDATE info SET head = %s WHERE gid = %s"), (head, gid))
         self.cursor_finish(cursor)
         return self.make_result(0)
 
@@ -281,14 +322,14 @@ class DataBase:
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT name, create_time, member_number, last_post_time "
+        cursor.execute(self.L("SELECT name, create_time, member_number, last_post_time, room_type, head "
                        "FROM info WHERE gid = %s"), (gid, ))
         data = cursor.fetchall()[0]
         self.cursor_finish(cursor)
-
         info = {
             'gid': int(gid), 'name': data[0], 'create_time': data[1],
-            'member_number': data[2], 'last_post_time': data[3]
+            'member_number': data[2], 'last_post_time': data[3],
+            'room_type': data[4], 'head': data[5]
         }
         return self.make_result(0, info=info)
 
@@ -304,8 +345,8 @@ class DataBase:
         password = hashlib.md5(password.encode()).hexdigest()
         head = get_head(email)
         cursor.execute(self.L("INSERT INTO users "
-                       "(uid, username, password, name, email, head, motto) VALUES (%s, %s, %s, %s, %s, %s, %s)"),
-                       (last_uid, username, password, name, email, head, motto))
+                       "(uid, username, password, name, email, head, motto, rooms) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"),
+                       (last_uid, username, password, name, email, head, motto, ""))
 
         self.update_last_uid()
         self.cursor_finish(cursor)
@@ -380,6 +421,16 @@ class DataBase:
         self.cursor_finish(cursor)
         return head
 
+    def get_head_public(self, username):
+        cursor = self.cursor_get()
+        cursor.execute(self.L("SELECT head FROM users WHERE username = %s"), (username, ))
+        data = cursor.fetchall()
+        if len(data) == 0:
+            return ''
+        head = data[0][0]
+        self.cursor_finish(cursor)
+        return head
+
     def room_check_in(self, auth, gid):
         # 检验是否在房间内
         username = self.auth2username(auth)
@@ -400,19 +451,31 @@ class DataBase:
             return False
         return True
 
+    def room_get_name(self, gid):
+        cursor = self.cursor_get()
+        cursor.execute(self.L("SELECT name FROM info WHERE gid = %s"), (gid,))
+        data = cursor.fetchall()
+        self.cursor_finish(cursor)
+        if len(data) > 0:
+            return data[0]
+        return ''
+
     def room_get_all(self, auth):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         # 列出所有room
+        username = self.auth2username(auth)
         cursor = self.cursor_get()
-        cursor.execute("SELECT gid, name FROM info")
+        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username, ))
         data = cursor.fetchall()
         if len(data) == 0:
-            return []
-        print(data)
+            return self.make_result(0, room_data=[])
+        rooms = data[0][0].split()
+        rooms = list(map(lambda x: int(x), rooms))
         result = []
-        for d in data:
-            result.append({"name": d[1], "gid": int(d[0])})
+        for r in rooms:
+            info = json.loads(self.room_get_info(auth, r))['data']['info']
+            result.append(info)
         self.cursor_finish(cursor)
         return self.make_result(0, room_data=result)
 
@@ -558,6 +621,27 @@ class DataBase:
             result.append({'username': d[0], 'filename': d[1], 'url': d[2]})
         return self.make_result(0, files=result)
 
+    def make_friends(self, auth, friend):
+        if self.check_auth(auth) is False:
+            return self.make_result(self.errors["Auth"])
+        if self.check_in("users", "username", friend) is False:
+            return self.make_result(self.errors["NoUser"])
+        username = self.auth2username(auth)
+        cursor = self.cursor_get()
+        cursor.execute(self.L("SELECT friend FROM friends WHERE username = %s AND friend = %s"), (username, friend))
+        data = cursor.fetchall()
+        if len(data) != 0:
+            return self.make_result(self.errors['HaveBeenFriends'])
+        gid = self.create_room_friend(auth, friend)
+        # self.room_set_info(auth, gid, head=self.get_head_public(friend))
+        cursor.execute(self.L("INSERT INTO friends (username, friend, gid) VALUES (%s, %s, %s)"),
+                       (username, friend, gid))
+        cursor.execute(self.L("INSERT INTO friends (username, friend, gid) VALUES (%s, %s, %s)"),
+                       (friend, username, gid))
+        self.cursor_finish(cursor)
+        self.room_join_in_friend(friend, gid)
+        return self.make_result(0)
+
 
 def module_test():
     db = DataBase()
@@ -646,6 +730,24 @@ def MiniTest():
     print('get file', db.file_get(_au))
 
 
+def friend_test():
+    db = DataBase()
+    db.db_init()
+    db.create_user('Lance', "", email='LanceLiang2018@163.com')
+    db.create_user('Tony', "", email='TonyLiang2018@163.com')
+    au1, au2 = jsonify(db.create_auth('Lance', ''))['data']['auth'], \
+               jsonify(db.create_auth('Tony', ''))['data']['auth']
+    print(au1, au2)
+    gid1 = db.create_room(au1, 'Lance\'s Room')
+    gid2 = db.create_room(au2, 'Tony\'s Room')
+    print('Lance | gid1=%d: room_get_all():' % gid1, db.room_get_all(au1))
+    print('Tony  | gid2=%d: room_get_all():' % gid2, db.room_get_all(au2))
+    print('make_friends(): ', db.make_friends(au1, 'Tony'))
+    print('make_friends(): ', db.make_friends(au2, 'Lance'))
+    print('Lance | gid1=%d: room_get_all():' % gid1, db.room_get_all(au1))
+    print('Tony  | gid2=%d: room_get_all():' % gid2, db.room_get_all(au2))
+
+
 if __name__ == '__main__':
     # db = DataBase()
     # db.db_init()
@@ -653,4 +755,5 @@ if __name__ == '__main__':
     # print(db.make_result(0, messages={"s": "a"}))
 
     # module_test()
-    MiniTest()
+    # MiniTest()
+    friend_test()

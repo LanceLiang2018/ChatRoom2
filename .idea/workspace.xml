@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/database.py" line="185" mnemonic="1" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_sql.db" beforeDir="false" afterPath="$PROJECT_DIR$/data_sql.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db_init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db_init.sql" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -60,28 +59,29 @@
     <session id="-1440046748">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="5" />
+          <entry key="project.closed" value="6" />
           <entry key="project.open.time.16" value="1" />
+          <entry key="project.open.time.32" value="1" />
           <entry key="project.open.time.4" value="1" />
           <entry key="project.open.time.49" value="1" />
           <entry key="project.open.time.51" value="1" />
           <entry key="project.open.time.65" value="1" />
           <entry key="project.open.time.92" value="1" />
-          <entry key="project.opened" value="6" />
+          <entry key="project.opened" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="3691" />
-          <entry key="sql" value="182" />
-          <entry key="txt" value="68" />
+          <entry key="py" value="5930" />
+          <entry key="sql" value="330" />
+          <entry key="txt" value="78" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="68" />
-          <entry key="Python" value="3691" />
-          <entry key="SQL" value="182" />
+          <entry key="PLAIN_TEXT" value="78" />
+          <entry key="Python" value="5930" />
+          <entry key="SQL" value="330" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -104,14 +104,16 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="57" column="8" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="8" />
+            <state relative-caret-position="183">
+              <caret line="759" lean-forward="true" selection-start-line="759" selection-end-line="759" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
-                <marker date="1547815057311" expanded="true" signature="191:193" ph="..." />
-                <marker date="1547815057311" expanded="true" signature="19541:20198" ph="..." />
-                <marker date="1547815057311" expanded="true" signature="21838:21841" ph="..." />
-                <marker date="1547815057311" expanded="true" signature="22909:22942" ph="..." />
+                <element signature="e#23193#24615#1" />
+                <marker date="1547882781192" expanded="true" signature="191:193" ph="..." />
+                <marker date="1547882781192" expanded="true" signature="17541:17800" ph="..." />
+                <marker date="1547882781192" expanded="true" signature="22685:23342" ph="..." />
+                <marker date="1547882781192" expanded="true" signature="26108:26110" ph="..." />
+                <marker date="1547882781192" expanded="true" signature="27178:27211" ph="..." />
               </folding>
             </state>
           </provider>
@@ -120,8 +122,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/db_init.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1269">
-              <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
+            <state relative-caret-position="216">
+              <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -129,7 +131,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/manage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1701">
+            <state relative-caret-position="227">
+              <caret line="139" column="18" lean-forward="true" selection-start-line="139" selection-start-column="18" selection-end-line="139" selection-end-column="18" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
                 <marker date="1547814944361" expanded="true" signature="6542:8021" ph="..." />
@@ -149,18 +152,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>get_all</find>
-      <find>_info</find>
-      <find>update_last_uid</find>
-      <find>update_last_gid</find>
-      <find>update_</find>
-      <find>_last_mid</find>
-      <find>update_last</find>
-      <find>_all</find>
-      <find>dir</find>
-      <find>rm</find>
-      <find>create_room</find>
-      <find>print</find>
       <find>get_in</find>
       <find>set</find>
       <find>os.</find>
@@ -179,6 +170,18 @@
       <find>T2</find>
       <find>.replace</find>
       <find>lower</find>
+      <find>NoUser</find>
+      <find>INSE</find>
+      <find>room_get_a</find>
+      <find>info</find>
+      <find>room_init</find>
+      <find>room_get_info</find>
+      <find>room_get_inf</find>
+      <find>create_room</find>
+      <find>cursor.execute(self.L(&quot;UPDATE info SET name = %s WHERE gid = %s&quot;), (name, gid))</find>
+      <find>UPDATE</find>
+      <find>create_room_friend</find>
+      <find>make_f</find>
     </findStrings>
     <replaceStrings>
       <replace>INT</replace>
@@ -230,7 +233,10 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="ProjectPane" />
+      <pane id="Scope" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -248,7 +254,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.manage">
+  <component name="RunManager" selected="Python.database">
     <configuration name="cos_tester" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="ChatRoom2" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -341,12 +347,15 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.manage" />
         <item itemvalue="Python.database" />
+        <item itemvalue="Python.manage" />
         <item itemvalue="Python.cos_tester" />
         <item itemvalue="Python.postgres_test" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",SHOW_INHERITED" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -478,7 +487,14 @@
       <option name="project" value="LOCAL" />
       <updated>1547370107277</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="for heroku">
+      <created>1547815077702</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1547815077702</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TodoView">
@@ -494,19 +510,19 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4939173" weight="0.24925596" />
-      <window_info id="Structure" order="1" sideWeight="0.5060827" side_tool="true" weight="0.24925596" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4918033" weight="0.24925596" />
+      <window_info id="Structure" order="1" sideWeight="0.5081967" side_tool="true" visible="true" weight="0.24925596" />
       <window_info id="Favorites" order="2" side_tool="true" weight="0.3296131" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49936628" weight="0.32512316" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39737275" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49936628" visible="true" weight="0.32459018" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3967213" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3283582" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.3295082" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.32428765" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.32459018" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.3234811" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5006337" side_tool="true" weight="0.325" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -560,7 +576,19 @@
     <MESSAGE value="Has New Message" />
     <MESSAGE value="File manager" />
     <MESSAGE value="fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix" />
+    <MESSAGE value="for heroku" />
+    <option name="LAST_COMMIT_MESSAGE" value="for heroku" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/database.py</url>
+          <line>745</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://E:/chatroom-new/chatroom/sever.py" />
@@ -620,14 +648,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/db_init.sql">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1269">
-          <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
+        <state relative-caret-position="216">
+          <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/manage.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1701">
+        <state relative-caret-position="227">
+          <caret line="139" column="18" lean-forward="true" selection-start-line="139" selection-start-column="18" selection-end-line="139" selection-end-column="18" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
             <marker date="1547814944361" expanded="true" signature="6542:8021" ph="..." />
@@ -637,14 +666,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="57" column="8" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="8" />
+        <state relative-caret-position="183">
+          <caret line="759" lean-forward="true" selection-start-line="759" selection-end-line="759" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <marker date="1547815057311" expanded="true" signature="191:193" ph="..." />
-            <marker date="1547815057311" expanded="true" signature="19541:20198" ph="..." />
-            <marker date="1547815057311" expanded="true" signature="21838:21841" ph="..." />
-            <marker date="1547815057311" expanded="true" signature="22909:22942" ph="..." />
+            <element signature="e#23193#24615#1" />
+            <marker date="1547882781192" expanded="true" signature="191:193" ph="..." />
+            <marker date="1547882781192" expanded="true" signature="17541:17800" ph="..." />
+            <marker date="1547882781192" expanded="true" signature="22685:23342" ph="..." />
+            <marker date="1547882781192" expanded="true" signature="26108:26110" ph="..." />
+            <marker date="1547882781192" expanded="true" signature="27178:27211" ph="..." />
           </folding>
         </state>
       </provider>
