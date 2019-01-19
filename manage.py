@@ -67,7 +67,7 @@ def get_head():
 
 
 @app.route('/get_head_public', methods=["POST"])
-def get_head():
+def get_head_public():
     form = request.form
     try:
         username = form['username']
