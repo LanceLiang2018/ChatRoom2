@@ -183,6 +183,23 @@ def get_room_info():
     return res
 
 
+@app.route('/get_user_info', methods=['POST'])
+def get_user_info():
+    form = request.form
+    try:
+        username, auth = None, None
+        if 'username' in form:
+            username = form['username']
+        else:
+            auth = form['auth']
+    except Exception as e:
+        return db.make_result(1, message=str(e))
+    if username is None:
+        username = db.auth2username(auth)
+    res = db.user_get_info(username)
+    return res
+
+
 @app.route('/get_room_all', methods=["POST"])
 def get_room_all():
     form = request.form

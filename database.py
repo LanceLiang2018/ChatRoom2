@@ -648,6 +648,30 @@ class DataBase:
         self.room_join_in_friend(friend, gid)
         return self.make_result(0)
 
+    def get_friends(self, auth):
+        if self.check_auth(auth) is False:
+            return self.make_result(self.errors["Auth"])
+        username = self.auth2username(auth)
+        cursor = self.cursor_get()
+        cursor.execute(self.L("SELECT friend FROM friends WHERE username = %s"), (username, ))
+        data = cursor.fetchall()
+        for d in data:
+            pass
+
+    def user_get_info(self, username):
+        cursor = self.cursor_get()
+        cursor.execute(self.L("SELECT uid, username, email, head, motto, rooms FROM users WHERE username = %s"),
+                       (username,))
+        info = cursor.fetchall()[0]
+        self.cursor_finish(cursor)
+        rooms = info[5]
+        rooms = list(map(lambda x: int(x), rooms.split()))
+        result = {
+            'uid': info[0], 'username': info[1], 'email': info[2],
+            'head': info[3], 'motto': info[4], 'rooms': rooms
+        }
+        return self.make_result(0, user_info=info)
+
 
 def module_test():
     db = DataBase()
