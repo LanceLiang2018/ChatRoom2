@@ -1,7 +1,7 @@
 import copy
 import hashlib
 import json
-# import os
+import os
 import time
 
 
@@ -58,7 +58,13 @@ class DataBase:
         # self.sql_type = "PostgreSQL"
         self.sql_types = {"SQLite": 0, "PostgreSQL": 1}
         # self.sql_type = self.sql_types['PostgreSQL']
-        self.sql_type = self.sql_types['SQLite']
+        # self.sql_type = self.sql_types['SQLite']
+        if os.environ.get('PORT', '5000') == '5000':
+            # Local
+            self.sql_type = self.sql_types['SQLite']
+        else:
+            # Remote
+            self.sql_type = self.sql_types['PostgreSQL']
         self.sql_chars = ["?", "%s"]
         self.sql_char = self.sql_chars[self.sql_type]
 
