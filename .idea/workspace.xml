@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_sql.db" beforeDir="false" afterPath="$PROJECT_DIR$/data_sql.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -73,15 +72,15 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="11" />
-          <entry key="py" value="6283" />
+          <entry key="py" value="6288" />
           <entry key="sql" value="330" />
-          <entry key="txt" value="148" />
+          <entry key="txt" value="170" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="148" />
-          <entry key="Python" value="6294" />
+          <entry key="PLAIN_TEXT" value="170" />
+          <entry key="Python" value="6299" />
           <entry key="SQL" value="330" />
         </counts>
       </usages-collector>
@@ -105,15 +104,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="338">
-              <caret line="169" column="58" selection-start-line="169" selection-start-column="58" selection-end-line="169" selection-end-column="58" />
+            <state relative-caret-position="176">
+              <caret line="169" column="56" selection-start-line="169" selection-start-column="56" selection-end-line="169" selection-end-column="56" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
-                <marker date="1547890626900" expanded="true" signature="189:191" ph="..." />
-                <marker date="1547890626900" expanded="true" signature="17768:18027" ph="..." />
-                <marker date="1547890626900" expanded="true" signature="22912:23569" ph="..." />
-                <marker date="1547890626900" expanded="true" signature="26335:26337" ph="..." />
-                <marker date="1547890626900" expanded="true" signature="27405:27438" ph="..." />
+                <marker date="1547890807979" expanded="true" signature="189:191" ph="..." />
+                <marker date="1547890807979" expanded="true" signature="17769:18028" ph="..." />
+                <marker date="1547890807979" expanded="true" signature="22913:23570" ph="..." />
+                <marker date="1547890807979" expanded="true" signature="26336:26338" ph="..." />
+                <marker date="1547890807979" expanded="true" signature="27406:27439" ph="..." />
               </folding>
             </state>
           </provider>
@@ -233,10 +232,7 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="ProjectPane" />
-      <pane id="Scope" />
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -529,7 +525,21 @@
       <option name="project" value="LOCAL" />
       <updated>1547884051601</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Fix: Drop exception">
+      <created>1547890666604</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1547890666604</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Fix: Drop exception">
+      <created>1547890750585</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1547890750585</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TodoView">
@@ -546,7 +556,7 @@
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4918033" weight="0.24925596" />
-      <window_info active="true" id="Structure" order="1" sideWeight="0.5081967" side_tool="true" visible="true" weight="0.24925596" />
+      <window_info id="Structure" order="1" sideWeight="0.5081967" side_tool="true" visible="true" weight="0.24925596" />
       <window_info id="Favorites" order="2" side_tool="true" weight="0.3296131" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -557,7 +567,7 @@
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3283582" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.3295082" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.3229508" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.21311475" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="9" visible="true" weight="0.21311475" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5006337" side_tool="true" weight="0.325" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -617,7 +627,8 @@
     <MESSAGE value="update manage.py" />
     <MESSAGE value="兼容Local和Remote" />
     <MESSAGE value="兼容Local和Remote  --fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="兼容Local和Remote  --fix" />
+    <MESSAGE value="Fix: Drop exception" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix: Drop exception" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="editorHistoryManager">
@@ -696,15 +707,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="169" column="58" selection-start-line="169" selection-start-column="58" selection-end-line="169" selection-end-column="58" />
+        <state relative-caret-position="176">
+          <caret line="169" column="56" selection-start-line="169" selection-start-column="56" selection-end-line="169" selection-end-column="56" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <marker date="1547890626900" expanded="true" signature="189:191" ph="..." />
-            <marker date="1547890626900" expanded="true" signature="17768:18027" ph="..." />
-            <marker date="1547890626900" expanded="true" signature="22912:23569" ph="..." />
-            <marker date="1547890626900" expanded="true" signature="26335:26337" ph="..." />
-            <marker date="1547890626900" expanded="true" signature="27405:27438" ph="..." />
+            <marker date="1547890807979" expanded="true" signature="189:191" ph="..." />
+            <marker date="1547890807979" expanded="true" signature="17769:18028" ph="..." />
+            <marker date="1547890807979" expanded="true" signature="22913:23570" ph="..." />
+            <marker date="1547890807979" expanded="true" signature="26336:26338" ph="..." />
+            <marker date="1547890807979" expanded="true" signature="27406:27439" ph="..." />
           </folding>
         </state>
       </provider>
