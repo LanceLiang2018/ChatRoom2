@@ -2,7 +2,6 @@ CREATE TABLE users (
     uid INT,
     username VARCHAR(64),
     password VARCHAR(128),
-    name VARCHAR(512),
     email VARCHAR(512),
     head VARCHAR(2048),
     motto VARCHAR(8192),

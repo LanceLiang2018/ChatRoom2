@@ -211,32 +211,14 @@ class DataBase:
         return last_gid
 
     # 返回值：创建的房间号。房间号自动递增
-    def create_room(self, auth, name='New group'):
+    def create_room(self, auth, name='New group', room_type='public'):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
 
-        gid = self.room_init('public')
+        gid = self.room_init(room_type)
         # 让本人加群
         self.room_join_in(auth, gid)
         user_head = self.get_head(auth)
-        # 设置本群基本信息
-        cursor = self.cursor_get()
-        cursor.execute(self.L('UPDATE info SET name = %s, create_time = %s, last_post_time = %s, head = %s '
-                              'WHERE gid = %s'),
-                       (name, int(time.time()), int(time.time()), user_head, gid))
-        self.cursor_finish(cursor)
-        self.room_update_active_time(gid)
-        # 返回房间号码
-        return gid
-
-    # 返回值：创建的房间号。房间号自动递增
-    def create_room_friend(self, auth, name='New group'):
-        if self.check_auth(auth) is False:
-            return self.make_result(self.errors["Auth"])
-        gid = self.room_init('private')
-        # 让本人加群
-        user_head = self.get_head(auth)
-        self.room_join_in(auth, gid)
         # 设置本群基本信息
         cursor = self.cursor_get()
         cursor.execute(self.L('UPDATE info SET name = %s, create_time = %s, last_post_time = %s, head = %s '
@@ -323,10 +305,29 @@ class DataBase:
         self.cursor_finish(cursor)
         return name
 
+    def room_get_gids(self, auth):
+        if self.check_auth(auth) is False:
+            return []
+        # 列出所有room
+        username = self.auth2username(auth)
+        cursor = self.cursor_get()
+        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username, ))
+        data = cursor.fetchall()
+        result = []
+        if len(data) != 0:
+            rooms = data[0][0].split()
+            result = list(map(lambda x: int(x), rooms))
+        cursor.execute(self.L("SELECT gid FROM info WHERE room_type = %s"), ('all', ))
+        data = cursor.fetchall()
+        for d in data:
+            result.append(int(d[0]))
+        self.cursor_finish(cursor)
+        return result
+
     # 获取房间信息
     def room_get_info(self, auth, gid):
-        if self.check_auth(auth) is False:
-            return self.make_result(self.errors["Auth"])
+        # if self.check_auth(auth) is False:
+        #     return self.make_result(self.errors["Auth"])
         cursor = self.cursor_get()
         cursor.execute(self.L("SELECT name, create_time, member_number, last_post_time, room_type, head "
                        "FROM info WHERE gid = %s"), (gid, ))
@@ -340,7 +341,7 @@ class DataBase:
         return self.make_result(0, info=info)
 
     # 默认：password为空，name和email默认
-    def create_user(self, username='Lance', password='', name='Nickname',
+    def create_user(self, username='Lance', password='',
                     email='lanceliang2018@163.com', motto=''):
         if self.check_in("users", "username", username):
             return self.make_result(self.errors["UserExist"])
@@ -351,8 +352,8 @@ class DataBase:
         password = hashlib.md5(password.encode()).hexdigest()
         head = get_head(email)
         cursor.execute(self.L("INSERT INTO users "
-                       "(uid, username, password, name, email, head, motto, rooms) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"),
-                       (last_uid, username, password, name, email, head, motto, ""))
+                       "(uid, username, password, email, head, motto, rooms) VALUES (%s, %s, %s, %s, %s, %s, %s)"),
+                       (last_uid, username, password, email, head, motto, ""))
 
         self.update_last_uid()
         self.cursor_finish(cursor)
@@ -399,8 +400,12 @@ class DataBase:
             cursor.execute(self.L("INSERT INTO auth (username, auth) VALUES (%s, %s)"), (username, auth))
 
         self.cursor_finish(cursor)
-        head = self.get_head(auth)
-        return self.make_result(0, auth=auth, head=head)
+        # head = self.get_head(auth)
+        # return self.make_result(0, auth=auth, head=head)
+        myinfo = json.loads(self.user_get_info(username=username))
+        myinfo = myinfo['data']['user_info']
+        myinfo.update({'auth': auth})
+        return self.make_result(0, user_info=myinfo)
 
     def check_auth(self, auth):
         result = self.check_in("auth", "auth", auth)
@@ -474,14 +479,20 @@ class DataBase:
         cursor = self.cursor_get()
         cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username, ))
         data = cursor.fetchall()
-        if len(data) == 0:
-            return self.make_result(0, room_data=[])
-        rooms = data[0][0].split()
-        rooms = list(map(lambda x: int(x), rooms))
         result = []
-        for r in rooms:
-            info = json.loads(self.room_get_info(auth, r))['data']['info']
-            result.append(info)
+        if len(data) != 0:
+            rooms = data[0][0].split()
+            rooms = list(map(lambda x: int(x), rooms))
+            for r in rooms:
+                info = json.loads(self.room_get_info(auth, r))['data']['info']
+                result.append(info)
+        cursor.execute(self.L("SELECT gid FROM info WHERE room_type = %s"), ('all', ))
+        data = cursor.fetchall()
+        if len(data) != 0:
+            rooms = list(map(lambda x: int(x[0]), data))
+            for r in rooms:
+                info = json.loads(self.room_get_info(auth, r))['data']['info']
+                result.append(info)
         self.cursor_finish(cursor)
         return self.make_result(0, room_data=result)
 
@@ -638,7 +649,7 @@ class DataBase:
         data = cursor.fetchall()
         if len(data) != 0:
             return self.make_result(self.errors['HaveBeenFriends'])
-        gid = self.create_room_friend(auth, friend)
+        gid = self.create_room(auth, friend, room_type='private')
         # self.room_set_info(auth, gid, head=self.get_head_public(friend))
         cursor.execute(self.L("INSERT INTO friends (username, friend, gid) VALUES (%s, %s, %s)"),
                        (username, friend, gid))
@@ -670,7 +681,7 @@ class DataBase:
             'uid': info[0], 'username': info[1], 'email': info[2],
             'head': info[3], 'motto': info[4], 'rooms': rooms
         }
-        return self.make_result(0, user_info=info)
+        return self.make_result(0, user_info=result)
 
 
 def module_test():

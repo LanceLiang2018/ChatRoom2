@@ -336,5 +336,156 @@ def make_friends():
     return data
 
 
+def get_if_in(key: str, form: dict, default=None):
+    if key in form:
+        return form[key]
+    return default
+
+
+@app.route('/v3/api/clear_all', methods=["POST", "GET"])
+def v3_clear_all():
+    try:
+        db.db_init()
+    except Exception as e:
+        return db.make_result(1, message=str(e))
+    return db.make_result(0)
+
+
+@app.route('/v3/api', methods=["POST"])
+def main_api():
+    form = request.form
+    # 一定需要action
+    if 'action' not in form:
+        return db.make_result(1, error="No action selected")
+    action = form['action']
+
+    # 这三个api不需要auth
+    if action == 'clear_all':
+        # 访问/v3/api/clear_all
+        pass
+
+    if action == 'get_user':
+        if 'username' not in form:
+            return db.make_result(1, error=form)
+        username = get_if_in('username', form, default='Lance')
+        return db.user_get_info(username=username)
+
+    if action == 'get_room':
+        if 'gid' not in form:
+            return db.make_result(1, error=form)
+        gid = int(get_if_in('gid', form, default='0'))
+        return db.room_get_info(gid=gid, auth='')
+
+    if action == 'login':
+        if 'username' not in form \
+                or 'password' not in form:
+            return db.make_result(1, error=form)
+        username = get_if_in('username', form)
+        password = get_if_in('password', form)
+        return db.create_auth(username=username, password=password)
+
+    if action == 'signup':
+        if 'username' not in form \
+                or 'password' not in form:
+            return db.make_result(1, error=form)
+        username = get_if_in('username', form)
+        password = get_if_in('password', form)
+        email = get_if_in('email', form, default='')
+        return db.create_user(username=username, password=password, email=email)
+
+    # 需要auth
+    if 'auth' not in form:
+        return db.make_result(1, error="No auth")
+    auth = form['auth']
+
+    if action == 'beat':
+        if db.check_auth(auth) is False:
+            return db.make_result(2)
+        return db.make_result(0)
+
+    if action == 'create_room':
+        name = get_if_in('name', form, default='New group')
+        room_type = get_if_in('room_type', form, default='public')
+        if db.check_auth(auth) is False:
+            return db.make_result(2)
+        gid = db.create_room(auth=auth, name=name, room_type=room_type)
+        return db.room_get_info(auth=auth, gid=gid)
+
+    if action == 'get_room':
+        return db.room_get_all(auth=auth)
+
+    if action == 'set_room':
+        if 'gid' not in form:
+            return db.make_result(1, error=form)
+        gid = int(get_if_in('gid', form, default=None))
+        name = get_if_in('name', form, default=None)
+        head = get_if_in('head', form, default=None)
+        return db.room_set_info(auth=auth, gid=gid, name=name, head=head)
+
+    if action == 'upload':
+        if 'data' not in form:
+            return db.make_result(1, error=form)
+        filename = get_if_in('filename', form, default='filename')
+        data = get_if_in('data', form, default=None)
+        data = base64.b64decode(data)
+        md5 = hashlib.md5(data).hexdigest()
+        filename_md5 = "%s" % md5
+        response = client.put_object(
+            Bucket=bucket,
+            Body=data,
+            Key=filename_md5,
+            StorageClass='STANDARD',
+            EnableMD5=False
+            # 我自己算吧......
+        )
+        print(response)
+        url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename_md5)
+        result = {
+            'filename': filename, 'etag': response['ETag'][1:-1],
+            "url": url
+        }
+        db.file_upload(auth, filename, url)
+        res = db.make_result(0, upload_result=result)
+        return res
+
+    if action == 'get_files':
+        limit = int(get_if_in('limit', form, default='30'))
+        offset = int(get_if_in('limit', form, default='0'))
+        return db.file_get(auth=auth, limit=limit, offset=offset)
+
+    if action == 'get_messages':
+        gid = int(get_if_in('gid', form, default='0'))
+        limit = int(get_if_in('limit', form, default='30'))
+        since = int(get_if_in('since', form, default='0'))
+
+        if gid == 0:
+            gids = db.room_get_gids(auth=auth)
+            messages = []
+            for g in gids:
+                result = json.loads(db.get_new_message(auth=auth, gid=g, limit=limit, since=since))
+                if result['code'] != 0:
+                    return jsonify(result)
+                messages.extend(result['data']['message'])
+            return db.make_result(0, message=messages)
+        else:
+            return db.get_new_message(auth=auth, gid=gid, limit=limit, since=since)
+
+    if action == 'send_message':
+        if 'gid' not in form \
+                or 'text' not in form:
+            return db.make_result(1, error=form)
+        gid = int(get_if_in('gid', form, default='0'))
+        text = get_if_in('text', form, default='text')
+        message_type = get_if_in('message_type', form, default='text')
+        return db.send_message(auth=auth, gid=gid, text=text, message_type=message_type)
+
+    if action == 'make_friends':
+        if 'friend' not in form:
+            return db.make_result(1, error=form)
+        friend = get_if_in('friend', form, default='Lance')
+        return db.make_friends(auth=auth, friend=friend)
+    return db.make_result(1, error='Not support method')
+
+
 if __name__ == '__main__':
-    app.run("0.0.0.0", port=os.environ.get('PORT', '5000'), debug=False)
+    app.run("0.0.0.0", port=int(os.environ.get('PORT', '5000')), debug=False)
