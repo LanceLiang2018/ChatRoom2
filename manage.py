@@ -354,10 +354,13 @@ def v3_clear_all():
 @app.route('/v3/api', methods=["POST"])
 def main_api():
     form = request.form
+    print("DEBUG:", form)
     # 一定需要action
     if 'action' not in form:
         return db.make_result(1, error="No action selected")
     action = form['action']
+
+    # print("Action...")
 
     # 这三个api不需要auth
     if action == 'clear_all':
@@ -398,6 +401,8 @@ def main_api():
         return db.make_result(1, error="No auth")
     auth = form['auth']
 
+    # print("Auth...")
+
     if action == 'beat':
         if db.check_auth(auth) is False:
             return db.make_result(2)
@@ -411,7 +416,8 @@ def main_api():
         gid = db.create_room(auth=auth, name=name, room_type=room_type)
         return db.room_get_info(auth=auth, gid=gid)
 
-    if action == 'get_room':
+    if action == 'get_room_all':
+        # print("Your request:", form)
         return db.room_get_all(auth=auth)
 
     if action == 'set_room':
