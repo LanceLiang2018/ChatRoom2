@@ -486,7 +486,7 @@ def main_api():
         elif gid != 0:
             # single room
             return db.get_new_message(auth=auth, gid=gid, limit=limit, since=since)
-        return db.make_result(0, message=[])
+        return db.make_result(1)
 
     if action == 'send_message':
         if 'gid' not in form \
