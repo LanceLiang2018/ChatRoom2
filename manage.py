@@ -463,9 +463,10 @@ def main_api():
         gid = int(get_if_in('gid', form, default='0'))
         limit = int(get_if_in('limit', form, default='30'))
         since = int(get_if_in('since', form, default='0'))
+        req = get_if_in('request', form, default='all')
 
-        if gid == 0:
-            gids = db.room_get_gids(auth=auth)
+        if req == 'all':
+            gids = db.room_get_gids(auth=auth, req='all')
             messages = []
             for g in gids:
                 result = json.loads(db.get_new_message(auth=auth, gid=g, limit=limit, since=since))
@@ -473,8 +474,19 @@ def main_api():
                     return jsonify(result)
                 messages.extend(result['data']['message'])
             return db.make_result(0, message=messages)
-        else:
+        elif req == 'private':
+            gids = db.room_get_gids(auth=auth, req='private')
+            messages = []
+            for g in gids:
+                result = json.loads(db.get_new_message(auth=auth, gid=g, limit=limit, since=since))
+                if result['code'] != 0:
+                    return jsonify(result)
+                messages.extend(result['data']['message'])
+            return db.make_result(0, message=messages)
+        elif gid != 0:
+            # single room
             return db.get_new_message(auth=auth, gid=gid, limit=limit, since=since)
+        return db.make_result(0, message=[])
 
     if action == 'send_message':
         if 'gid' not in form \

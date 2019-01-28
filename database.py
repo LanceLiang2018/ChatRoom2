@@ -305,7 +305,7 @@ class DataBase:
         self.cursor_finish(cursor)
         return name
 
-    def room_get_gids(self, auth):
+    def room_get_gids(self, auth, req='all'):
         if self.check_auth(auth) is False:
             return []
         # 列出所有room
@@ -317,10 +317,11 @@ class DataBase:
         if len(data) != 0:
             rooms = data[0][0].split()
             result = list(map(lambda x: int(x), rooms))
-        cursor.execute(self.L("SELECT gid FROM info WHERE room_type = %s"), ('all', ))
-        data = cursor.fetchall()
-        for d in data:
-            result.append(int(d[0]))
+        if req == 'all':
+            cursor.execute(self.L("SELECT gid FROM info WHERE room_type = %s"), ('all', ))
+            data = cursor.fetchall()
+            for d in data:
+                result.append(int(d[0]))
         self.cursor_finish(cursor)
         return result
 
