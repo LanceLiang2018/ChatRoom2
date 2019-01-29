@@ -169,7 +169,7 @@ class DataBase:
                 try:
                     cursor.execute("DROP TABLE IF EXISTS %s" % table)
                 except Exception as e:
-                    print('Error when dropping:', 'Exception:\n', e)
+                    print('Error when dropping:', table, '\nException:\n', e)
                     self.cursor_finish(cursor)
                     cursor = self.cursor_get()
             self.cursor_finish(cursor)
