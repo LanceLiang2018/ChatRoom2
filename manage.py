@@ -420,6 +420,12 @@ def main_api():
         # print("Your request:", form)
         return db.room_get_all(auth=auth)
 
+    if action == 'join_in':
+        if 'gid' not in form:
+            return db.make_result(1, error=form)
+        gid = int(get_if_in('gid', form, default="0"))
+        return db.room_join_in(auth=auth, gid=gid)
+
     if action == 'set_room':
         if 'gid' not in form:
             return db.make_result(1, error=form)
@@ -464,9 +470,10 @@ def main_api():
         limit = int(get_if_in('limit', form, default='30'))
         since = int(get_if_in('since', form, default='0'))
         req = get_if_in('request', form, default='all')
-        print("req: ", req)
+        # print("req: ", req)
 
         if req == 'all' and gid == 0:
+            print("req: all")
             gids = db.room_get_gids(auth=auth, req='all')
             messages = []
             for g in gids:
@@ -476,6 +483,7 @@ def main_api():
                 messages.extend(result['data']['message'])
             return db.make_result(0, message=messages)
         elif req == 'private':
+            print("req: private")
             gids = db.room_get_gids(auth=auth, req='private')
             messages = []
             for g in gids:
@@ -485,7 +493,7 @@ def main_api():
                 messages.extend(result['data']['message'])
             return db.make_result(0, message=messages)
         elif gid != 0:
-            print("single room...")
+            print("req: single room...")
             return db.get_new_message(auth=auth, gid=gid, limit=limit, since=since)
         return db.make_result(0, message=[])
 

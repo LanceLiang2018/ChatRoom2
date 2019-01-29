@@ -235,6 +235,8 @@ class DataBase:
             return self.make_result(self.errors["RoomNumber"])
         if self.room_check_in(auth, gid) is True:
             return self.make_result(0)
+        if json.loads(self.room_get_info(auth=auth, gid=gid))['data']['info']['room_type'] == "all":
+            return self.make_result(0)
         cursor = self.cursor_get()
         username = self.auth2username(auth)
         cursor.execute(self.L("INSERT INTO members (gid, username) VALUES (%s, %s)"),
