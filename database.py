@@ -653,7 +653,11 @@ class DataBase:
         data = cursor.fetchall()
         if len(data) != 0:
             return self.make_result(self.errors['HaveBeenFriends'])
-        gid = self.create_room(auth, friend, room_type='private')
+        user_info = json.loads(self.user_get_info(username=friend))['data']['user_info']
+        if user_info['user_type'] == 'printer':
+            gid = self.create_room(auth, friend, room_type='printer')
+        else:
+            gid = self.create_room(auth, friend, room_type='private')
         # self.room_set_info(auth, gid, head=self.get_head_public(friend))
         cursor.execute(self.L("INSERT INTO friends (username, friend, gid) VALUES (%s, %s, %s)"),
                        (username, friend, gid))
