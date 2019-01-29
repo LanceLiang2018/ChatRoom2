@@ -6,6 +6,7 @@ CREATE TABLE users (
     head VARCHAR(2048),
     motto VARCHAR(8192),
     rooms VARCHAR(8192),
+    user_type VARCHAR(32),
     status INT
 );
 

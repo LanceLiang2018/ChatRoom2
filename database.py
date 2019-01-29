@@ -20,7 +20,7 @@ class DataBase:
 
         self.error = {
             "Success": "%s" % self.success,
-            "Error": "%s" % self.error_preview,
+            "Error": "%s 服务器内部错误...请提交BUG给管理员。" % self.error_preview,
             "Auth": "%s Auth 错误，请重新登录。" % self.error_preview,
             "RoomNumber": "%s 房间号错误。" % self.error_preview,
             "NotIn": "%s 你不在此房间内。" % self.error_preview,
@@ -343,9 +343,9 @@ class DataBase:
         }
         return self.make_result(0, info=info)
 
-    # 默认：password为空，name和email默认
+    # 默认：password为空，name和email默认, normal
     def create_user(self, username='Lance', password='',
-                    email='lanceliang2018@163.com', motto=''):
+                    email='lanceliang2018@163.com', motto='', user_type='normal'):
         if self.check_in("users", "username", username):
             return self.make_result(self.errors["UserExist"])
 
@@ -355,8 +355,9 @@ class DataBase:
         password = hashlib.md5(password.encode()).hexdigest()
         head = get_head(email)
         cursor.execute(self.L("INSERT INTO users "
-                       "(uid, username, password, email, head, motto, rooms) VALUES (%s, %s, %s, %s, %s, %s, %s)"),
-                       (last_uid, username, password, email, head, motto, ""))
+                       "(uid, username, password, email, head, motto, rooms, user_type) "
+                              "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"),
+                       (last_uid, username, password, email, head, motto, "", user_type))
 
         self.update_last_uid()
         self.cursor_finish(cursor)
@@ -674,15 +675,16 @@ class DataBase:
 
     def user_get_info(self, username):
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT uid, username, email, head, motto, rooms FROM users WHERE username = %s"),
-                       (username,))
+        cursor.execute(self.L("SELECT uid, username, email, head, motto, rooms, user_type "
+                              "FROM users WHERE username = %s"),
+                       (username, ))
         info = cursor.fetchall()[0]
         self.cursor_finish(cursor)
         rooms = info[5]
         rooms = list(map(lambda x: int(x), rooms.split()))
         result = {
             'uid': info[0], 'username': info[1], 'email': info[2],
-            'head': info[3], 'motto': info[4], 'rooms': rooms
+            'head': info[3], 'motto': info[4], 'rooms': rooms, "user_type": info[6]
         }
         return self.make_result(0, user_info=result)
 
