@@ -6,10 +6,8 @@
     <bookmark url="file://$PROJECT_DIR$/manage.py" line="468" mnemonic="1" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="NEW!! New api v3!!">
+    <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="update: user_type">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db_init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db_init.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -136,8 +134,8 @@
       <file leaf-file-name="manage.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/manage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
-              <caret line="466" column="65" lean-forward="true" selection-start-line="466" selection-start-column="65" selection-end-line="466" selection-end-column="65" />
+            <state relative-caret-position="336">
+              <caret line="520" lean-forward="true" selection-start-line="520" selection-end-line="520" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -220,8 +218,8 @@
         <option value="$PROJECT_DIR$/cos_tester.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/db_init.sql" />
-        <option value="$PROJECT_DIR$/manage.py" />
         <option value="$PROJECT_DIR$/database.py" />
+        <option value="$PROJECT_DIR$/manage.py" />
       </list>
     </option>
   </component>
@@ -237,10 +235,7 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="ProjectPane" />
-      <pane id="Scope" />
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -556,7 +551,14 @@
       <option name="project" value="LOCAL" />
       <updated>1548597826952</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="update: user_type">
+      <created>1548741623276</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1548741623276</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TodoView">
@@ -576,10 +578,10 @@
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32786885" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50074404" side_tool="true" weight="0.3295082" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49936628" weight="0.32459018" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.27332243" />
-      <window_info anchor="bottom" id="Python Console" order="8" weight="0.3229508" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="9" visible="true" weight="0.27272728" />
+      <window_info anchor="bottom" id="Python Console" order="8" weight="0.3229308" />
       <window_info id="Structure" order="1" sideWeight="0.51331717" side_tool="true" visible="true" weight="0.121673" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49925596" weight="0.3295082" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49925596" weight="0.3283582" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3967213" />
       <window_info id="Favorites" order="2" side_tool="true" weight="0.3296131" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -647,7 +649,8 @@
     <MESSAGE value="Fix: Drop exception" />
     <MESSAGE value="add: get_user_info" />
     <MESSAGE value="NEW!! New api v3!!" />
-    <option name="LAST_COMMIT_MESSAGE" value="NEW!! New api v3!!" />
+    <MESSAGE value="update: user_type" />
+    <option name="LAST_COMMIT_MESSAGE" value="update: user_type" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="editorHistoryManager">
@@ -753,8 +756,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/manage.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="466" column="65" lean-forward="true" selection-start-line="466" selection-start-column="65" selection-end-line="466" selection-end-column="65" />
+        <state relative-caret-position="336">
+          <caret line="520" lean-forward="true" selection-start-line="520" selection-end-line="520" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
