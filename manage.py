@@ -393,7 +393,7 @@ def main_api():
             return db.make_result(1, error=form)
         username = get_if_in('username', form)
         password = get_if_in('password', form)
-        user_type = get_if_in('uer_type', form, default='normal')
+        user_type = get_if_in('user_type', form, default='normal')
         email = get_if_in('email', form, default='')
         return db.create_user(username=username, password=password, email=email, user_type=user_type)
 

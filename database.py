@@ -665,6 +665,8 @@ class DataBase:
                        (friend, username, gid))
         self.cursor_finish(cursor)
         self.room_join_in_friend(friend, gid)
+        print("make_friends(): ", user_info)
+        print("\troom_info: ", self.room_get_info(auth=auth, gid=gid))
         return self.make_result(0)
 
     def get_friends(self, auth):
