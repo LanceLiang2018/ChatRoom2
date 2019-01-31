@@ -512,6 +512,12 @@ def main_api():
             return db.make_result(1, error=form)
         friend = get_if_in('friend', form, default='Lance')
         return db.make_friends(auth=auth, friend=friend)
+
+    if action == "set_user":
+        head = get_if_in('head', form, default=None)
+        motto = get_if_in('motto', form, default=None)
+        email = get_if_in("email", form, default=None)
+        return db.user_set_info(auth=auth, head=head, motto=motto, email=email)
     return db.make_result(1, error='Not support method')
 
 
