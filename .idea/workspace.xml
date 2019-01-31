@@ -6,103 +6,14 @@
     <bookmark url="file://$PROJECT_DIR$/manage.py" line="468" mnemonic="1" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="bugs?">
-      <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
+    <list default="true" id="f93b35fc-c40d-4525-b13b-9cb02d31371b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="FUSProjectUsageTrigger">
-    <session id="-1725046645">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="1" />
-          <entry key="project.open.time.1" value="1" />
-          <entry key="project.open.time.29" value="1" />
-          <entry key="project.open.time.34" value="1" />
-          <entry key="project.opened" value="3" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="Python Console" value="60" />
-          <entry key="py" value="2838" />
-          <entry key="sql" value="225" />
-          <entry key="txt" value="101" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="PLAIN_TEXT" value="101" />
-          <entry key="Python" value="2898" />
-          <entry key="SQL" value="225" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="py" value="2" />
-          <entry key="pyi" value="1" />
-          <entry key="sql" value="1" />
-          <entry key="txt" value="1" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="2" />
-          <entry key="PythonStub" value="1" />
-          <entry key="SQL" value="1" />
-        </counts>
-      </usages-collector>
-    </session>
-    <session id="-1440046748">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="11" />
-          <entry key="project.open.time.1" value="1" />
-          <entry key="project.open.time.16" value="1" />
-          <entry key="project.open.time.2" value="2" />
-          <entry key="project.open.time.28" value="1" />
-          <entry key="project.open.time.32" value="1" />
-          <entry key="project.open.time.37" value="1" />
-          <entry key="project.open.time.4" value="1" />
-          <entry key="project.open.time.49" value="1" />
-          <entry key="project.open.time.51" value="1" />
-          <entry key="project.open.time.65" value="1" />
-          <entry key="project.open.time.92" value="1" />
-          <entry key="project.opened" value="12" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="Python Console" value="126" />
-          <entry key="py" value="10653" />
-          <entry key="sql" value="330" />
-          <entry key="txt" value="220" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="PLAIN_TEXT" value="220" />
-          <entry key="Python" value="10779" />
-          <entry key="SQL" value="330" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="py" value="2" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="Python" value="2" />
-        </counts>
-      </usages-collector>
-    </session>
   </component>
   <component name="FavoritesManager">
     <favorites_list name="ChatRoom2" />
@@ -112,8 +23,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="634" column="70" lean-forward="true" selection-start-line="634" selection-start-column="70" selection-end-line="634" selection-end-column="70" />
+            <state relative-caret-position="265">
+              <caret line="647" column="51" selection-start-line="647" selection-start-column="51" selection-end-line="647" selection-end-column="51" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
                 <marker date="1548944290485" expanded="true" signature="189:191" ph="..." />
@@ -127,7 +38,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/db_init.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1350">
+            <state relative-caret-position="1377">
               <caret line="51" column="13" selection-start-line="51" selection-start-column="4" selection-end-line="51" selection-end-column="13" />
             </state>
           </provider>
@@ -136,10 +47,9 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/manage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="327">
+            <state relative-caret-position="12771">
               <caret line="473" column="23" selection-start-line="473" selection-start-column="23" selection-end-line="473" selection-end-column="23" />
               <folding>
-                <element signature="e#0#13#0" expanded="true" />
                 <marker date="1548943922238" expanded="true" signature="5143:5527" ph="..." />
                 <marker date="1548943922238" expanded="true" signature="7447:10930" ph="..." />
                 <marker date="1548943922238" expanded="true" signature="8991:10930" ph="..." />
@@ -590,7 +500,21 @@
       <option name="project" value="LOCAL" />
       <updated>1548743446267</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="get_file">
+      <created>1548944332501</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1548944332501</updated>
+    </task>
+    <task id="LOCAL-00033" summary="get_file">
+      <created>1548944465618</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1548944465618</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TodoView">
@@ -616,10 +540,10 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32700136" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49925596" weight="0.18317503" />
-      <window_info anchor="bottom" id="Python Console" order="8" weight="0.3229308" />
-      <window_info anchor="bottom" id="Version Control" order="9" visible="true" weight="0.27272728" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50074404" side_tool="true" weight="0.3295082" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.4985119" weight="0.20163934" />
+      <window_info anchor="bottom" id="Python Console" order="8" weight="0.32131147" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="9" visible="true" weight="0.27213115" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5014881" side_tool="true" weight="0.66885245" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -653,12 +577,25 @@
         </entry>
       </map>
     </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="manage.py" />
     <MESSAGE value="More..And More!!!" />
     <MESSAGE value="装饰器好像不起作用呢" />
     <MESSAGE value="Fixed more modules" />
@@ -683,14 +620,15 @@
     <MESSAGE value="NEW!! New api v3!!" />
     <MESSAGE value="update: user_type" />
     <MESSAGE value="bugs?" />
-    <option name="LAST_COMMIT_MESSAGE" value="bugs?" />
+    <MESSAGE value="get_file" />
+    <option name="LAST_COMMIT_MESSAGE" value="get_file" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://E:/chatroom-new/chatroom/sever.py" />
+    <entry file="file://$PROJECT_DIR$/../chatroom-new/chatroom/sever.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/hashlib.py" />
-    <entry file="file://E:/ChatRoom/database.py" />
-    <entry file="file://E:/heroku/python-getting-started/README.md" />
+    <entry file="file://$PROJECT_DIR$/../ChatRoom/database.py" />
+    <entry file="file://$PROJECT_DIR$/../heroku/python-getting-started/README.md" />
     <entry file="file://$PROJECT_DIR$/manager.py" />
     <entry file="file://$PROJECT_DIR$/db_init_bak.sql.py" />
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3/time.pyi" />
@@ -743,36 +681,35 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/manage.py">
+    <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="327">
-          <caret line="473" column="23" selection-start-line="473" selection-start-column="23" selection-end-line="473" selection-end-column="23" />
+        <state relative-caret-position="265">
+          <caret line="647" column="51" selection-start-line="647" selection-start-column="51" selection-end-line="647" selection-end-column="51" />
           <folding>
-            <element signature="e#0#13#0" expanded="true" />
-            <marker date="1548943922238" expanded="true" signature="5143:5527" ph="..." />
-            <marker date="1548943922238" expanded="true" signature="7447:10930" ph="..." />
-            <marker date="1548943922238" expanded="true" signature="8991:10930" ph="..." />
-            <marker date="1548943922238" expanded="true" signature="9270:9551" ph="..." />
+            <element signature="e#0#11#0" expanded="true" />
+            <marker date="1548944290485" expanded="true" signature="189:191" ph="..." />
+            <marker date="1548944290485" expanded="true" signature="28548:28549" ph="..." />
+            <marker date="1548944290485" expanded="true" signature="29617:29650" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/db_init.sql">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1350">
+        <state relative-caret-position="1377">
           <caret line="51" column="13" selection-start-line="51" selection-start-column="4" selection-end-line="51" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database.py">
+    <entry file="file://$PROJECT_DIR$/manage.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="634" column="70" lean-forward="true" selection-start-line="634" selection-start-column="70" selection-end-line="634" selection-end-column="70" />
+        <state relative-caret-position="12771">
+          <caret line="473" column="23" selection-start-line="473" selection-start-column="23" selection-end-line="473" selection-end-column="23" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
-            <marker date="1548944290485" expanded="true" signature="189:191" ph="..." />
-            <marker date="1548944290485" expanded="true" signature="28548:28549" ph="..." />
-            <marker date="1548944290485" expanded="true" signature="29617:29650" ph="..." />
+            <marker date="1548943922238" expanded="true" signature="5143:5527" ph="..." />
+            <marker date="1548943922238" expanded="true" signature="7447:10930" ph="..." />
+            <marker date="1548943922238" expanded="true" signature="8991:10930" ph="..." />
+            <marker date="1548943922238" expanded="true" signature="9270:9551" ph="..." />
           </folding>
         </state>
       </provider>
