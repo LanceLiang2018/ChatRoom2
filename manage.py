@@ -393,8 +393,9 @@ def main_api():
             return db.make_result(1, error=form)
         username = get_if_in('username', form)
         password = get_if_in('password', form)
+        user_type = get_if_in('user_type', form, default='normal')
         email = get_if_in('email', form, default='')
-        return db.create_user(username=username, password=password, email=email)
+        return db.create_user(username=username, password=password, email=email, user_type=user_type)
 
     # 需要auth
     if 'auth' not in form:
@@ -419,6 +420,12 @@ def main_api():
     if action == 'get_room_all':
         # print("Your request:", form)
         return db.room_get_all(auth=auth)
+
+    if action == 'join_in':
+        if 'gid' not in form:
+            return db.make_result(1, error=form)
+        gid = int(get_if_in('gid', form, default="0"))
+        return db.room_join_in(auth=auth, gid=gid)
 
     if action == 'set_room':
         if 'gid' not in form:
@@ -464,9 +471,10 @@ def main_api():
         limit = int(get_if_in('limit', form, default='30'))
         since = int(get_if_in('since', form, default='0'))
         req = get_if_in('request', form, default='all')
-        print("req: ", req)
+        # print("req: ", req)
 
         if req == 'all' and gid == 0:
+            print("req: all")
             gids = db.room_get_gids(auth=auth, req='all')
             messages = []
             for g in gids:
@@ -476,6 +484,7 @@ def main_api():
                 messages.extend(result['data']['message'])
             return db.make_result(0, message=messages)
         elif req == 'private':
+            print("req: private")
             gids = db.room_get_gids(auth=auth, req='private')
             messages = []
             for g in gids:
@@ -485,7 +494,7 @@ def main_api():
                 messages.extend(result['data']['message'])
             return db.make_result(0, message=messages)
         elif gid != 0:
-            print("single room...")
+            print("req: single room...")
             return db.get_new_message(auth=auth, gid=gid, limit=limit, since=since)
         return db.make_result(1)
 
@@ -503,8 +512,15 @@ def main_api():
             return db.make_result(1, error=form)
         friend = get_if_in('friend', form, default='Lance')
         return db.make_friends(auth=auth, friend=friend)
+
+    if action == "set_user":
+        head = get_if_in('head', form, default=None)
+        motto = get_if_in('motto', form, default=None)
+        email = get_if_in("email", form, default=None)
+        return db.user_set_info(auth=auth, head=head, motto=motto, email=email)
     return db.make_result(1, error='Not support method')
 
 
 if __name__ == '__main__':
     app.run("0.0.0.0", port=int(os.environ.get('PORT', '5000')), debug=False)
+
