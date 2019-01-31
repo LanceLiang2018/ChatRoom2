@@ -632,7 +632,7 @@ class DataBase:
         username = self.auth2username(auth)
         cursor = self.cursor_get()
         cursor.execute(self.L("SELECT DISTINCT username, filename, url FROM files "
-                              "WHERE username = %s "
+                              "WHERE username = %s ORDER BY filename "
                               "LIMIT %s OFFSET %s"),
                        (username, limit, offset))
         data = cursor.fetchall()

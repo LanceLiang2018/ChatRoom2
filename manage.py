@@ -435,24 +435,31 @@ def main_api():
         head = get_if_in('head', form, default=None)
         return db.room_set_info(auth=auth, gid=gid, name=name, head=head)
 
+    # New Action
+    if action == 'pre_upload':
+        return db.make_result(0, pre_upload={'pre_url': 'https://%s.cos.ap-chengdu.myqcloud.com/' % bucket})
+
     if action == 'upload':
         if 'data' not in form:
             return db.make_result(1, error=form)
         filename = get_if_in('filename', form, default='filename')
         data = get_if_in('data', form, default=None)
         data = base64.b64decode(data)
-        md5 = hashlib.md5(data).hexdigest()
-        filename_md5 = "%s" % md5
+        # md5 = hashlib.md5(data).hexdigest()
+        # filename_md5 = "%s" % md5
         response = client.put_object(
             Bucket=bucket,
             Body=data,
-            Key=filename_md5,
+            # Key=filename_md5,
+            Key=filename,
             StorageClass='STANDARD',
             EnableMD5=False
             # 我自己算吧......
+        #     不算了
         )
         print(response)
-        url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename_md5)
+        # url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename_md5)
+        url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename)
         result = {
             'filename': filename, 'etag': response['ETag'][1:-1],
             "url": url
