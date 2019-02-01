@@ -445,13 +445,14 @@ def main_api():
         filename = get_if_in('filename', form, default='filename')
         data = get_if_in('data', form, default=None)
         data = base64.b64decode(data)
+        username = db.auth2username(auth)
         # md5 = hashlib.md5(data).hexdigest()
         # filename_md5 = "%s" % md5
         response = client.put_object(
             Bucket=bucket,
             Body=data,
             # Key=filename_md5,
-            Key=filename,
+            Key="%s/%s" % (username, filename),
             StorageClass='STANDARD',
             EnableMD5=False
             # 我自己算吧......
@@ -459,7 +460,7 @@ def main_api():
         )
         print(response)
         # url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename_md5)
-        url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s' % (bucket, filename)
+        url = 'https://%s.cos.ap-chengdu.myqcloud.com/%s/%s' % (bucket, username, filename)
         result = {
             'filename': filename, 'etag': response['ETag'][1:-1],
             "url": url
