@@ -475,6 +475,8 @@ def main_api():
         return db.file_get(auth=auth, limit=limit, offset=offset)
 
     if action == 'get_messages':
+        if db.check_auth(auth) is False:
+            return db.make_result(2)
         gid = int(get_if_in('gid', form, default='0'))
         limit = int(get_if_in('limit', form, default='30'))
         since = int(get_if_in('since', form, default='0'))
