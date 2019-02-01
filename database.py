@@ -202,23 +202,24 @@ class DataBase:
 
         cursor.execute(self.L("INSERT INTO info (gid, name, create_time, member_number, last_post_time, room_type) "
                        "VALUES (%s, %s, %s, %s, %s, %s)"), (last_gid, 'New Group', int(time.time()), 0, int(time.time()), room_type))
-        cursor.execute(self.L("INSERT INTO message (gid, mid, uid, username, head, type, text, send_time) VALUES "
-                       "(%s, 0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s") +
-                       self.L("=512', 'text',  %s, %s)"), (last_gid, "Welcome to this room!", int(time.time())))
+#        cursor.execute(self.L("INSERT INTO message (gid, mid, uid, username, head, type, text, send_time) VALUES "
+#                       "(%s, 0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s") +
+#                       self.L("=512', 'text',  %s, %s)"), (last_gid, "Welcome to this room!", int(time.time())))
 
         self.cursor_finish(cursor)
         # 返回这次建立的gid
         return last_gid
 
     # 返回值：创建的房间号。房间号自动递增
-    def create_room(self, auth, name='New group', room_type='public'):
+    def create_room(self, auth, name='New group', room_type='public', user_head=None):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
 
         gid = self.room_init(room_type)
         # 让本人加群
         self.room_join_in(auth, gid)
-        user_head = self.get_head(auth)
+        if user_head is None:
+            user_head = self.get_head(auth)
         # 设置本群基本信息
         cursor = self.cursor_get()
         cursor.execute(self.L('UPDATE info SET name = %s, create_time = %s, last_post_time = %s, head = %s '
@@ -655,9 +656,9 @@ class DataBase:
             return self.make_result(self.errors['HaveBeenFriends'])
         user_info = json.loads(self.user_get_info(username=friend))['data']['user_info']
         if user_info['user_type'] == 'printer':
-            gid = self.create_room(auth, friend, room_type='printer')
+            gid = self.create_room(auth, '%s|%s' % (username, friend), room_type='printer')
         else:
-            gid = self.create_room(auth, friend, room_type='private')
+            gid = self.create_room(auth, '%s|%s' % (username, friend), room_type='private')
         # self.room_set_info(auth, gid, head=self.get_head_public(friend))
         cursor.execute(self.L("INSERT INTO friends (username, friend, gid) VALUES (%s, %s, %s)"),
                        (username, friend, gid))
