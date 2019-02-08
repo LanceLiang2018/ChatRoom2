@@ -540,7 +540,7 @@ def main_api():
         return db.user_set_info(auth=auth, head=head, motto=motto, email=email)
 
     if action == "get_version":
-        return db.make_result(0, version="1.7")
+        return db.make_result(0, version="2.0")
 
     return db.make_result(1, error='Not support method')
 
