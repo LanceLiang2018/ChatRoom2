@@ -24,8 +24,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="81">
-              <caret line="535" column="19" lean-forward="true" selection-start-line="535" selection-start-column="19" selection-end-line="535" selection-end-column="19" />
+            <state relative-caret-position="-4438">
+              <caret line="394" column="39" selection-start-line="394" selection-start-column="39" selection-end-line="394" selection-end-column="39" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
                 <marker date="1549019104401" expanded="true" signature="189:191" ph="..." />
@@ -39,8 +39,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/db_init.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1377">
-              <caret line="51" column="13" selection-start-line="51" selection-start-column="4" selection-end-line="51" selection-end-column="13" />
+            <state relative-caret-position="392">
+              <caret line="67" column="11" selection-start-line="67" selection-start-column="11" selection-end-line="67" selection-end-column="11" />
             </state>
           </provider>
         </entry>
@@ -48,10 +48,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/manage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="478" column="36" selection-start-line="478" selection-start-column="36" selection-end-line="478" selection-end-column="36" />
+            <state relative-caret-position="279">
+              <caret line="542" column="47" lean-forward="true" selection-start-line="542" selection-start-column="47" selection-end-line="542" selection-end-column="47" />
               <folding>
-                <marker date="1549021095073" expanded="true" signature="5143:5527" ph="..." />
+                <marker date="1549622776212" expanded="true" signature="5143:5527" ph="..." />
               </folding>
             </state>
           </provider>
@@ -68,8 +68,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>self.success</find>
-      <find>self.error</find>
       <find>check_in</find>
       <find>result=</find>
       <find>T2</find>
@@ -98,6 +96,8 @@
       <find>'beat'</find>
       <find>create_room</find>
       <find>def get_message</find>
+      <find>pre</find>
+      <find>create_auth</find>
     </findStrings>
     <replaceStrings>
       <replace>INT</replace>
@@ -519,7 +519,14 @@
       <option name="project" value="LOCAL" />
       <updated>1548945216203</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="fix bug: get_messages">
+      <created>1549021127432</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1549021127432</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TodoView">
@@ -540,8 +547,8 @@
       <window_info id="Favorites" order="2" side_tool="true" weight="0.3296131" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49936628" weight="0.3229508" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3967213" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49936628" visible="true" weight="0.3229508" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3967213" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32700136" />
@@ -598,7 +605,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="装饰器好像不起作用呢" />
     <MESSAGE value="Fixed more modules" />
     <MESSAGE value="Empty dir?" />
     <MESSAGE value="GID update" />
@@ -623,19 +629,9 @@
     <MESSAGE value="bugs?" />
     <MESSAGE value="get_file" />
     <MESSAGE value="debug branch" />
-    <option name="LAST_COMMIT_MESSAGE" value="debug branch" />
+    <MESSAGE value="fix bug: get_messages" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix bug: get_messages" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/manage.py</url>
-          <line>503</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../chatroom-new/chatroom/sever.py" />
@@ -696,15 +692,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/db_init.sql">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1377">
-          <caret line="51" column="13" selection-start-line="51" selection-start-column="4" selection-end-line="51" selection-end-column="13" />
+        <state relative-caret-position="392">
+          <caret line="67" column="11" selection-start-line="67" selection-start-column="11" selection-end-line="67" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="535" column="19" lean-forward="true" selection-start-line="535" selection-start-column="19" selection-end-line="535" selection-end-column="19" />
+        <state relative-caret-position="-4438">
+          <caret line="394" column="39" selection-start-line="394" selection-start-column="39" selection-end-line="394" selection-end-column="39" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
             <marker date="1549019104401" expanded="true" signature="189:191" ph="..." />
@@ -716,10 +712,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/manage.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="478" column="36" selection-start-line="478" selection-start-column="36" selection-end-line="478" selection-end-column="36" />
+        <state relative-caret-position="279">
+          <caret line="542" column="47" lean-forward="true" selection-start-line="542" selection-start-column="47" selection-end-line="542" selection-end-column="47" />
           <folding>
-            <marker date="1549021095073" expanded="true" signature="5143:5527" ph="..." />
+            <marker date="1549622776212" expanded="true" signature="5143:5527" ph="..." />
           </folding>
         </state>
       </provider>

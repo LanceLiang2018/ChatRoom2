@@ -351,6 +351,16 @@ def v3_clear_all():
     return db.make_result(0)
 
 
+@app.route('/update', methods=["GET"])
+def update():
+    return redirect("https://%s.cos.ap-chengdu.myqcloud.com/release.apk" % bucket)
+
+
+@app.route('/device', methods=["GET"])
+def device():
+    return redirect("https://%s.cos.ap-chengdu.myqcloud.com/device.exe" % bucket)
+
+
 @app.route('/v3/api', methods=["POST"])
 def main_api():
     form = request.form
@@ -528,6 +538,10 @@ def main_api():
         motto = get_if_in('motto', form, default=None)
         email = get_if_in("email", form, default=None)
         return db.user_set_info(auth=auth, head=head, motto=motto, email=email)
+
+    if action == "get_version":
+        return db.make_result(0, version="1.7")
+
     return db.make_result(1, error='Not support method')
 
 
