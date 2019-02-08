@@ -361,6 +361,16 @@ def device():
     return redirect("https://%s.cos.ap-chengdu.myqcloud.com/device.exe" % bucket)
 
 
+@app.route('/license', methods=["GET"])
+def license_help():
+    return redirect("https://static-1254016670.cos.ap-chengdu.myqcloud.com/license.html")
+
+
+@app.route('/device_help', methods=["GET"])
+def device_help():
+    return redirect("https://static-1254016670.cos.ap-chengdu.myqcloud.com/device_part.html")
+
+
 @app.route('/v3/api', methods=["POST"])
 def main_api():
     form = request.form
