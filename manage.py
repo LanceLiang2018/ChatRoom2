@@ -527,6 +527,7 @@ def main_api():
                 if result['code'] != 0:
                     return jsonify(result)
                 messages.extend(result['data']['message'])
+            print('private:', messages)
             return db.make_result(0, message=messages)
         elif gid != 0:
             print("req: single room...")
