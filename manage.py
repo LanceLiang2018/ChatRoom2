@@ -3,6 +3,7 @@ import hashlib
 # import json
 import os
 
+import requests
 from flask import *
 from qcloud_cos import CosConfig
 from qcloud_cos import CosS3Client
@@ -387,6 +388,10 @@ def main_api():
         # 访问/v3/api/clear_all
         pass
 
+    if action == "get_version":
+        ver = requests.get("https://raw.githubusercontent.com/LanceLiang2018/Chat2-Android/master/ver").text
+        return db.make_result(0, version=ver)
+
     if action == 'get_user':
         if 'username' not in form:
             return db.make_result(1, error=form)
@@ -548,9 +553,6 @@ def main_api():
         motto = get_if_in('motto', form, default=None)
         email = get_if_in("email", form, default=None)
         return db.user_set_info(auth=auth, head=head, motto=motto, email=email)
-
-    if action == "get_version":
-        return db.make_result(0, version="2.0")
 
     return db.make_result(1, error='Not support method')
 
