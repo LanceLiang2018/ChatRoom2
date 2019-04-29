@@ -46,11 +46,8 @@ def index():
         res = res + '\n\n##### End of files.\n'
         return res
     """
-    return \
-        "<title>Chat 2 Server</title>" \
-        "<h1>It is a server for Chat 2! <br>@LanceLiang2018</h1><br>" \
-        "<a href=\"http://github.com/LanceLiang2018/ChatRoom2/\">About (Server)</a><br>" \
-        "<a href=\"http://github.com/LanceLiang2018/Chat2-Android/\">About (Client)</a>"
+    with open('about_us.html', 'rb') as f:
+        return f.read()
 
 
 @app.route('/get_head', methods=["POST"])
@@ -365,6 +362,21 @@ def device():
 @app.route('/license', methods=["GET"])
 def license_help():
     return redirect("https://static-1254016670.cos.ap-chengdu.myqcloud.com/license.html")
+
+
+@app.route('/about', methods=['GET'])
+def about():
+    return redirect('/')
+
+
+@app.route('/source', methods=['GET'])
+def source():
+    return redirect('https://github.com/LanceLiang20178/ChatRoom2/LICENSE')
+
+
+@app.route('/learn', methods=['GET'])
+def learn():
+    return '(这里会教你们怎么使用这个软件，但是我没有写！)'
 
 
 @app.route('/device_help', methods=["GET"])
