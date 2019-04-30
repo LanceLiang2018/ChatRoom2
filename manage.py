@@ -371,7 +371,7 @@ def about():
 
 @app.route('/source', methods=['GET'])
 def source():
-    return redirect('https://github.com/LanceLiang20178/ChatRoom2/LICENSE')
+    return redirect('https://github.com/LanceLiang2018/ChatRoom2/blob/master/LICENSE')
 
 
 @app.route('/learn', methods=['GET'])
