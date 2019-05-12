@@ -31,7 +31,8 @@ CREATE TABLE maintain (
 
 CREATE TABLE auth (
     username VARCHAR(512),
-    auth VARCHAR(128)
+    auth VARCHAR(128),
+    pre_auth VARCHAR(12)
 );
 
 INSERT INTO maintain (last_uid, last_gid, last_mid, flag) VALUES (0, 0, 0, 'FLAG');

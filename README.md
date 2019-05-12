@@ -8,4 +8,6 @@ ChatRoom2 是一个聊天室软件（虽然目前有其他功能来着，没有�
 
 # Release
 
-这是一个release分支。直接和 http://lance-chatroom2.herokuapp.com/ 挂钩。
+~~这是一个release分支。直接和 http://lance-chatroom2.herokuapp.com/ 挂钩。~~
+
+现在是 https://lance-latina-debug.herokuapp.com/

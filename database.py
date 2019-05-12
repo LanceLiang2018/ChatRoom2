@@ -1,12 +1,54 @@
+import base64
+import binascii
 import copy
 import hashlib
 import json
 import os
+import random
 import time
 
 
 def get_head(email):
     return 'https://s.gravatar.com/avatar/' + hashlib.md5(email.lower().encode()).hexdigest() + '?s=144'
+
+
+def b64_decode(string: str):
+    try:
+        result = base64.b64decode(string.encode()).decode()
+        return result
+    except binascii.Error:
+        print("[Error decoding] Can't decode %s!" % string)
+        return string
+
+
+def b64_encode(string: str):
+    return base64.b64encode(string.encode()).decode()
+
+
+# V4 API 新内容：新的加密方式
+# 分 token 和 login_token 两种，其中 login_token 含有原来的 md5 密码
+
+def decode_login_token(login_token):
+    if len(login_token) != 68:
+        return '0' * 32
+    auth_mix = login_token[:32]
+    order = login_token[32:64]
+
+    orderd = []
+    for i in range(0, len(order), 2):
+        orderd.append({'num': int(order[i:i + 2], 16), 'key': i // 2})
+    orderd.sort(key=lambda x: x['num'])
+    auth = ''
+    for i in orderd:
+        auth = auth + "%02x" % (0xff - int(auth_mix[i['key'] * 2:i['key'] * 2 + 2], 16))
+    return auth
+
+
+def make_token(self):
+    salt = '%032x' % random.randint(0, 1 << (4 * 32))
+    salted = hashlib.md5(("%s%s" % (self.auth, salt)).encode()).hexdigest()
+    token = "%s%s%s" % (salted, salt, self.auth[:4])
+    return token
 
 
 class DataBase:
@@ -59,6 +101,7 @@ class DataBase:
         self.sql_types = {"SQLite": 0, "PostgreSQL": 1}
         # self.sql_type = self.sql_types['PostgreSQL']
         # self.sql_type = self.sql_types['SQLite']
+        # 用获取的端口号区分本地和远程
         if os.environ.get('PORT', '5000') == '5000':
             # Local
             self.sql_type = self.sql_types['SQLite']
@@ -202,9 +245,6 @@ class DataBase:
 
         cursor.execute(self.L("INSERT INTO info (gid, name, create_time, member_number, last_post_time, room_type) "
                        "VALUES (%s, %s, %s, %s, %s, %s)"), (last_gid, 'New Group', int(time.time()), 0, int(time.time()), room_type))
-#        cursor.execute(self.L("INSERT INTO message (gid, mid, uid, username, head, type, text, send_time) VALUES "
-#                       "(%s, 0, 0, 'Administrator', 'https://s.gravatar.com/avatar/544b5009873b27f5e0aa6dd8ffc1d3d8?s") +
-#                       self.L("=512', 'text',  %s, %s)"), (last_gid, "Welcome to this room!", int(time.time())))
 
         self.cursor_finish(cursor)
         # 返回这次建立的gid
@@ -239,29 +279,31 @@ class DataBase:
         if json.loads(self.room_get_info(auth=auth, gid=gid))['data']['info']['room_type'] == "all":
             return self.make_result(0)
         cursor = self.cursor_get()
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         cursor.execute(self.L("INSERT INTO members (gid, username) VALUES (%s, %s)"),
-                       (gid, username))
+                       (gid, username_b64))
         cursor.execute(self.L("INSERT INTO new_messages (gid, username, latest_mid) VALUES (%s, %s, %s)"),
-                       (gid, username, 0))
-        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username, ))
+                       (gid, username_b64, 0))
+        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username_b64, ))
         rooms = "%s %s" % (cursor.fetchall()[0][0], str(gid))
         cursor.execute(self.L("UPDATE users SET rooms = %s WHERE username = %s"),
-                       (rooms, username))
+                       (rooms, username_b64))
         self.cursor_finish(cursor)
         self.room_update_number(gid)
         return self.make_result(0)
 
-    def room_join_in_friend(self, friend, gid):
+    def room_join_in_friend(self, friend_src, gid):
+        friend_b64 = b64_encode(friend_src)
         cursor = self.cursor_get()
         cursor.execute(self.L("INSERT INTO members (gid, username) VALUES (%s, %s)"),
-                       (gid, friend))
+                       (gid, friend_b64))
         cursor.execute(self.L("INSERT INTO new_messages (gid, username, latest_mid) VALUES (%s, %s, %s)"),
-                       (gid, friend, 0))
-        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (friend, ))
+                       (gid, friend_b64, 0))
+        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (friend_b64, ))
         rooms = "%s %s" % (cursor.fetchall()[0][0], str(gid))
         cursor.execute(self.L("UPDATE users SET rooms = %s WHERE username = %s"),
-                       (rooms, friend))
+                       (rooms, friend_b64))
         self.cursor_finish(cursor)
         self.room_update_number(gid)
         return self.make_result(0)
@@ -290,11 +332,13 @@ class DataBase:
         data = cursor.fetchall()
         data = list(map(lambda x: x[0], data))
         heads = []
-        for username in data:
-            heads.append(self.user_get_head(username))
+        for username_b64 in data:
+            username_src = b64_decode(username_b64)
+            heads.append(self.user_get_head(username_src))
         result = []
         for i in range(len(data)):
-            result.append({'username': data[i], 'head': heads[i]})
+            username_src = b64_decode(data[i])
+            result.append({'username': username_src, 'head': heads[i]})
         cursor.close()
         self.cursor_finish(cursor)
         return self.make_result(0, result=result)
@@ -312,9 +356,10 @@ class DataBase:
         if self.check_auth(auth) is False:
             return []
         # 列出所有room
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username, ))
+        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username_b64, ))
         data = cursor.fetchall()
         result = []
         if len(data) != 0:
@@ -345,9 +390,10 @@ class DataBase:
         return self.make_result(0, info=info)
 
     # 默认：password为空，name和email默认, normal
-    def create_user(self, username='Lance', password='',
-                    email='lanceliang2018@163.com', motto='', user_type='normal'):
-        if self.check_in("users", "username", username):
+    def create_user(self, username_src='People', password='',
+                    email='', motto='', user_type='normal'):
+        username_b64 = b64_encode(username_src)
+        if self.check_in("users", "username", username_src):
             return self.make_result(self.errors["UserExist"])
 
         cursor = self.cursor_get()
@@ -358,19 +404,20 @@ class DataBase:
         cursor.execute(self.L("INSERT INTO users "
                        "(uid, username, password, email, head, motto, rooms, user_type) "
                               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"),
-                       (last_uid, username, password, email, head, motto, "", user_type))
+                       (last_uid, username_b64, password, email, head, motto, "", user_type))
 
         self.update_last_uid()
         self.cursor_finish(cursor)
         return self.make_result(0)
 
     # 检查密码是否符合
-    def user_check(self, username, password):
-        if self.check_in("users", "username", username) is False:
+    def user_check(self, username_src, password):
+        username_b64 = b64_encode(username_src)
+        if self.check_in("users", "username", username_b64) is False:
             return False
         cursor = self.cursor_get()
         password = hashlib.md5(password.encode()).hexdigest()
-        cursor.execute(self.L("SELECT password FROM users WHERE username = %s"), (username, ))
+        cursor.execute(self.L("SELECT password FROM users WHERE username = %s"), (username_b64, ))
         data = cursor.fetchall()
         if len(data) == 0:
             return False
@@ -381,33 +428,35 @@ class DataBase:
             return True
         return False
 
-    def user_get_head(self, username):
-        if self.check_in("users", "username", username) is False:
+    def user_get_head(self, username_src):
+        username_b64 = b64_encode(username_src)
+        if self.check_in("users", "username", username_b64) is False:
             # return self.make_result(self.errors["NoUser"])
             return ""
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT head FROM users WHERE username = %s"), (username, ))
+        cursor.execute(self.L("SELECT head FROM users WHERE username = %s"), (username_b64, ))
         head = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
         return head
 
     # 创建鉴权避免麻烦。鉴权格式：MD5(username, secret, time)
-    def create_auth(self, username, password):
+    def create_auth(self, username_src, password):
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
-        if not self.user_check(username, password):
+        if not self.user_check(username_src, password):
             return self.make_result(self.errors["Password"])
-        string = "%s %s %s" % (username, self.secret, str(time.time()))
+        string = "%s %s %s" % (username_b64, self.secret, str(time.time()))
         auth = hashlib.md5(string.encode()).hexdigest()
 
-        if self.check_in("auth", "username", username):
-            cursor.execute(self.L("UPDATE auth SET auth = %s WHERE username = %s"), (auth, username))
+        if self.check_in("auth", "username", username_b64):
+            cursor.execute(self.L("UPDATE auth SET auth = %s WHERE username = %s"), (auth, username_b64))
         else:
-            cursor.execute(self.L("INSERT INTO auth (username, auth) VALUES (%s, %s)"), (username, auth))
+            cursor.execute(self.L("INSERT INTO auth (username, auth) VALUES (%s, %s)"), (username_b64, auth))
 
         self.cursor_finish(cursor)
         # head = self.get_head(auth)
         # return self.make_result(0, auth=auth, head=head)
-        myinfo = json.loads(self.user_get_info(username=username))
+        myinfo = json.loads(self.user_get_info(username_src))
         myinfo = myinfo['data']['user_info']
         myinfo.update({'auth': auth})
         return self.make_result(0, user_info=myinfo)
@@ -418,28 +467,32 @@ class DataBase:
             return True
         return False
 
+    # 返回的是src码
     def auth2username(self, auth):
         if self.check_auth(auth) is False:
             return 'No_User'
         cursor = self.cursor_get()
         cursor.execute(self.L("SELECT username FROM auth WHERE auth = %s"), (auth,))
-        username = cursor.fetchall()[0][0]
+        username_b64 = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
-        return username
+        username_src = b64_decode(username_b64)
+        return username_src
 
     def get_head(self, auth):
         if self.check_auth(auth) is False:
             return ""
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT head FROM users WHERE username = %s"), (username, ))
+        cursor.execute(self.L("SELECT head FROM users WHERE username = %s"), (username_b64, ))
         head = cursor.fetchall()[0][0]
         self.cursor_finish(cursor)
         return head
 
-    def get_head_public(self, username):
+    def get_head_public(self, username_src):
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT head FROM users WHERE username = %s"), (username, ))
+        cursor.execute(self.L("SELECT head FROM users WHERE username = %s"), (username_b64, ))
         data = cursor.fetchall()
         if len(data) == 0:
             return ''
@@ -449,9 +502,10 @@ class DataBase:
 
     def room_check_in(self, auth, gid):
         # 检验是否在房间内
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT username FROM members WHERE username = %s AND gid = %s"), (username, gid))
+        cursor.execute(self.L("SELECT username FROM members WHERE username = %s AND gid = %s"), (username_b64, gid))
         data = cursor.fetchall()
         self.cursor_finish(cursor)
         if len(data) == 0:
@@ -480,9 +534,10 @@ class DataBase:
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         # 列出所有room
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username, ))
+        cursor.execute(self.L("SELECT rooms FROM users WHERE username = %s"), (username_b64, ))
         data = cursor.fetchall()
         result = []
         if len(data) != 0:
@@ -514,9 +569,10 @@ class DataBase:
         # if self.room_check_in(auth, gid) is False:
         #     return self.make_result(self.errors["NotIn"])
 
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
 
-        head = self.user_get_head(username)
+        head = self.user_get_head(username_b64)
         last_mid = self.update_last_mid()
 
         if self.room_check_exist(gid) is False:
@@ -524,7 +580,7 @@ class DataBase:
         cursor = self.cursor_get()
         cursor.execute(self.L("INSERT INTO message (mid, gid, username, head, "
                               "type, text, send_time) VALUES (%s, %s, %s, %s, %s, %s, %s)"),
-                       (last_mid, gid, username, head, message_type, text, int(time.time())))
+                       (last_mid, gid, username_b64, head, message_type, text, int(time.time())))
         self.cursor_finish(cursor)
 
         self.room_update_active_time(gid)
@@ -549,6 +605,7 @@ class DataBase:
         for d in data:
             unit_['gid'] = int(gid)
             unit_['mid'], unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
+            unit_['username'] = b64_decode(unit_['username'])
             result.append(copy.deepcopy(unit_))
         self.cursor_finish(cursor)
         return self.make_result(0, message=result)
@@ -572,19 +629,20 @@ class DataBase:
         for d in data:
             unit_['gid'] = int(gid)
             unit_['mid'], unit_['username'], unit_['head'], unit_['type'], unit_['text'], unit_['send_time'] = d
+            unit_['username'] = b64_decode(unit_['username'])
             result.append(copy.deepcopy(unit_))
         self.cursor_finish(cursor)
         return self.make_result(0, message=result)
 
-    def user_get_latest_mid(self, auth=None, username=None):
-        if auth is None and username is None:
+    def user_get_latest_mid(self, auth=None):
+        if auth is None:
             return ""
-        if username is None:
-            username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
         cursor.execute(self.L("SELECT gid, latest_mid FROM new_messages "
                        "WHERE username = %s"),
-                       (username, ))
+                       (username_b64, ))
         data = cursor.fetchall()
         cursor.close()
         result = []
@@ -596,78 +654,85 @@ class DataBase:
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
         cursor = self.cursor_get()
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         if head is not None:
-            cursor.execute(self.L("UPDATE users SET head = %s WHERE username = %s"), (head, username))
+            cursor.execute(self.L("UPDATE users SET head = %s WHERE username = %s"), (head, username_b64))
         if motto is not None:
-            cursor.execute(self.L("UPDATE users SET motto = %s WHERE username = %s"), (motto, username))
+            cursor.execute(self.L("UPDATE users SET motto = %s WHERE username = %s"), (motto, username_b64))
         if email is not None:
-            cursor.execute(self.L("UPDATE users SET email = %s WHERE username = %s"), (email, username))
+            cursor.execute(self.L("UPDATE users SET email = %s WHERE username = %s"), (email, username_b64))
         self.cursor_finish(cursor)
         return self.make_result(0)
 
     def have_read(self, auth, gid, latest_mid):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
 
         cursor = self.cursor_get()
         cursor.execute(self.L("UPDATE new_messages SET latest_mid = %s WHERE username = %s AND gid = %s"),
-                       (int(latest_mid), username, gid))
+                       (int(latest_mid), username_b64, gid))
         self.cursor_finish(cursor)
         return self.make_result(0)
 
     def file_upload(self, auth, filename: str='FILE', url: str=''):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
         cursor.execute(self.L("INSERT INTO files (username, filename, url) VALUES (%s, %s, %s)"),
-                       (username, filename, url))
+                       (username_b64, filename, url))
         self.cursor_finish(cursor)
         return self.make_result(0)
 
     def file_get(self, auth, limit: int=30, offset: int=0):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
         cursor.execute(self.L("SELECT DISTINCT username, filename, url FROM files "
                               "WHERE username = %s ORDER BY filename "
                               "LIMIT %s OFFSET %s"),
-                       (username, limit, offset))
+                       (username_b64, limit, offset))
         data = cursor.fetchall()
         self.cursor_finish(cursor)
         result = []
         for d in data:
-            result.append({'username': d[0], 'filename': d[1], 'url': d[2]})
+            result.append({'username': username_src, 'filename': d[1], 'url': d[2]})
         return self.make_result(0, files=result)
 
-    def make_friends(self, auth, friend):
+    def make_friends(self, auth, friend_src):
+        friend_b64 = b64_encode(friend_src)
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
-        if self.check_in("users", "username", friend) is False:
+        if self.check_in("users", "username", friend_b64) is False:
             return self.make_result(self.errors["NoUser"])
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT friend FROM friends WHERE username = %s AND friend = %s"), (username, friend))
+        cursor.execute(self.L("SELECT friend FROM friends WHERE username = %s AND friend = %s"),
+                       (username_b64, friend_b64))
         data = cursor.fetchall()
         if len(data) != 0:
             return self.make_result(self.errors['HaveBeenFriends'])
-        user_info = json.loads(self.user_get_info(username=friend))['data']['user_info']
-        my_info = json.loads(self.user_get_info(username=username))['data']['user_info']
+        user_info = json.loads(self.user_get_info(friend_src))['data']['user_info']
+        my_info = json.loads(self.user_get_info(username_src))['data']['user_info']
         user_head = "%s|%s" % (user_info['head'], my_info['head'])
         if user_info['user_type'] == 'printer':
-            gid = self.create_room(auth, '%s|%s' % (username, friend), room_type='printer', user_head=user_head)
+            gid = self.create_room(auth, '%s|%s' % (username_src, friend_src), room_type='printer', user_head=user_head)
         else:
-            gid = self.create_room(auth, '%s|%s' % (username, friend), room_type='private', user_head=user_head)
+            gid = self.create_room(auth, '%s|%s' % (username_src, friend_src), room_type='private', user_head=user_head)
         # self.room_set_info(auth, gid, head=self.get_head_public(friend))
         cursor.execute(self.L("INSERT INTO friends (username, friend, gid) VALUES (%s, %s, %s)"),
-                       (username, friend, gid))
+                       (username_b64, friend_b64, gid))
         cursor.execute(self.L("INSERT INTO friends (username, friend, gid) VALUES (%s, %s, %s)"),
-                       (friend, username, gid))
+                       (friend_b64, username_b64, gid))
         self.cursor_finish(cursor)
-        self.room_join_in_friend(friend, gid)
+        self.room_join_in_friend(friend_src, gid)
         print("make_friends(): ", user_info)
         print("\troom_info: ", self.room_get_info(auth=auth, gid=gid))
         return self.make_result(0)
@@ -675,27 +740,130 @@ class DataBase:
     def get_friends(self, auth):
         if self.check_auth(auth) is False:
             return self.make_result(self.errors["Auth"])
-        username = self.auth2username(auth)
+        username_src = self.auth2username(auth)
+        username_b64 = b64_decode(username_src)
         cursor = self.cursor_get()
-        cursor.execute(self.L("SELECT friend FROM friends WHERE username = %s"), (username, ))
+        cursor.execute(self.L("SELECT friend FROM friends WHERE username = %s"), (username_b64, ))
         data = cursor.fetchall()
         for d in data:
             pass
+        # TODO: 啥！？这里还没做完...
 
-    def user_get_info(self, username):
+    def user_get_info(self, username_src):
+        username_b64 = b64_encode(username_src)
         cursor = self.cursor_get()
         cursor.execute(self.L("SELECT uid, username, email, head, motto, rooms, user_type "
                               "FROM users WHERE username = %s"),
-                       (username, ))
+                       (username_b64, ))
         info = cursor.fetchall()[0]
         self.cursor_finish(cursor)
         rooms = info[5]
         rooms = list(map(lambda x: int(x), rooms.split()))
         result = {
-            'uid': info[0], 'username': info[1], 'email': info[2],
+            'uid': info[0], 'username': username_src, 'email': info[2],
             'head': info[3], 'motto': info[4], 'rooms': rooms, "user_type": info[6]
         }
         return self.make_result(0, user_info=result)
+
+    # Token 格式：salted + salt + pre_auth = (68)
+    def token_parse(self, token):
+        if len(token) != 68:
+            return '0' * 32
+        salted = token[:32]
+        salt = token[32:-4]
+        pre_auth = token[-4:]
+
+        cursor = self.cursor_get()
+        cursor.execute(self.L("SELECT auth, pre_auth FROM auth WHERE pre_auth = %s"), (pre_auth,))
+        data = cursor.fetchall()
+        self.cursor_finish(cursor)
+        # 没有找到pre_auth
+        if len(data) == 0:
+            return '0' * 32
+        auth_s = data[0][0]
+        return auth_s
+
+    # Token 格式：salted + salt + pre_auth = (68)
+    def check_token(self, token):
+        if len(token) != 68:
+            return False
+        salted = token[:32]
+        salt = token[32:-4]
+        pre_auth = token[-4:]
+
+        cursor = self.cursor_get()
+        cursor.execute(self.L("SELECT auth, pre_auth FROM auth WHERE pre_auth = %s"), (pre_auth,))
+        data = cursor.fetchall()
+        self.cursor_finish(cursor)
+        # 没有找到pre_auth
+        if len(data) == 0:
+            return False
+        auth_s = data[0][0]
+        salted_s = hashlib.md5(("%s%s" % (auth_s, salt)).encode()).hexdigest()
+        if salted == salted_s:
+            return True
+        return False
+
+    # V4: 新的LoginToken: auth_mix(32) + order(32) + noise(4) = (68)
+    # 返回login_token
+    def create_login_token(self, username_src, password):
+        username_b64 = b64_encode(username_src)
+        cursor = self.cursor_get()
+        if not self.user_check(username_src, password):
+            return self.make_result(self.errors["Password"])
+
+        # 独立生成auth
+        # string = "%s %s %s" % (username_b64, self.secret, str(time.time()))
+        # auth = hashlib.md5(string.encode()).hexdigest()
+
+        # 使用已经有的auth
+        auth = json.loads(self.create_auth(username_src, password))['data']['user_info']['auth']
+
+        # 获取token的时候不需要pre_auth。使用随机数。
+        # pre_auth = auth[:4]
+        pre_auth = "%04x" % random.randint(0, 1 << 16)
+        auth_li = []
+        for i in range(0, len(auth), 2):
+            auth_li.append(auth[i:i + 2])
+
+        # 生成order
+        order = random.sample(range(0, 256), 16)
+        # 数字→排列
+        orderd = []
+        for i in range(len(order)):
+            # orderd.append({order[i]: i})
+            orderd.append({'num': order[i], 'key': i})
+        orderd.sort(key=lambda x: x['num'])
+
+        new_orderd = ['00', ] * 16
+        index = 0
+        for k in orderd:
+            # 这里取反了一次
+            new_orderd[k['key']] = "%02x" % (0xff - int(auth_li[index], 16))
+            index = index + 1
+
+        auth_mix = ''
+        for i in new_orderd:
+            auth_mix = auth_mix + i
+
+        result = '%s' % auth_mix
+        for i in order:
+            result = "%s%s" % (result, "%02x" % i)
+
+        login_token = result + pre_auth
+
+        # 这里才需要pre_auth
+        cursor.execute(self.L("UPDATE auth SET auth = %s, pre_auth = %s WHERE username = %s"),
+                       (auth, auth[:4], username_b64))
+
+        self.cursor_finish(cursor)
+
+        print("DEBUG: auth:", auth)
+
+        myinfo = json.loads(self.user_get_info(username_src))
+        myinfo = myinfo['data']['user_info']
+        myinfo.update({'login_token': login_token})
+        return self.make_result(0, user_info=myinfo)
 
 
 def module_test():
@@ -703,11 +871,15 @@ def module_test():
     db.db_init()
     # exit()
     db.create_user("Lance", "1352040930lxr")
-    db.create_user("Lance2", "1352040930lxr")
+    db.create_user("中文", "1352040930lxr")
     # print(db.check_in("users", "username", "Lance"))
-    _au = json.loads(db.create_auth("Lance", "1352040930lxr"))['data']['auth']
-    _au2 = json.loads(db.create_auth("Lance2", "1352040930lxr"))['data']['auth']
-    print(db.check_auth(_au), db.check_auth(_au2))
+    # _au = json.loads(db.create_auth("Lance", "1352040930lxr"))['data']['user_info']['auth']
+    # _au2 = json.loads(db.create_auth("中文", "1352040930lxr"))['data']['user_info']['auth']
+    _to = json.loads(db.create_login_token("Lance", "1352040930lxr"))['data']['user_info']['login_token']
+    _to2 = json.loads(db.create_login_token("中文", "1352040930lxr"))['data']['user_info']['login_token']
+    _au = decode_login_token(_to)
+    _au2 = decode_login_token(_to2)
+    print(_au, _au2)
     name = db.auth2username(_au), db.auth2username(_au2)
     print(name)
     print(_au, _au2)
@@ -718,8 +890,8 @@ def module_test():
     print(db.send_message(_au, _gid, "Test message"))
     print(db.send_message(_au, _gid, "Sent by Lance"))
     print(db.get_message(_au, _gid))
-    print(db.send_message(_au2, _gid, "Sent by Lance2"))
-    print(db.send_message(_au2, _gid, "Sent by Lance2"))
+    print(db.send_message(_au2, _gid, "Sent by 中文"))
+    print(db.send_message(_au2, _gid, "Sent by 中文"))
     print(db.get_message(_au, _gid))
     print(db.room_get_all(_au))
     print(db.room_get_members(_au, _gid))
@@ -729,7 +901,7 @@ def jsonify(string: str):
     return json.loads(string)
 
 
-def MiniTest():
+def mini_test():
     db = DataBase()
     db.db_init()
     db.create_user("Lance", "")
@@ -790,8 +962,7 @@ def friend_test():
     db.db_init()
     db.create_user('Lance', "", email='LanceLiang2018@163.com')
     db.create_user('Tony', "", email='TonyLiang2018@163.com')
-    au1, au2 = jsonify(db.create_auth('Lance', ''))['data']['auth'], \
-               jsonify(db.create_auth('Tony', ''))['data']['auth']
+    au1, au2 = jsonify(db.create_auth('Lance', ''))['data']['auth'], jsonify(db.create_auth('Tony', ''))['data']['auth']
     print(au1, au2)
     gid1 = db.create_room(au1, 'Lance\'s Room')
     gid2 = db.create_room(au2, 'Tony\'s Room')
@@ -803,12 +974,21 @@ def friend_test():
     print('Tony  | gid2=%d: room_get_all():' % gid2, db.room_get_all(au2))
 
 
+def base64_username_test():
+    db = DataBase()
+    db.db_init()
+
+    print(db.create_user('Lance', ''))
+    print(jsonify(db.create_auth('Lance', '')))
+
+
 if __name__ == '__main__':
     # db = DataBase()
     # db.db_init()
     # print(db.update_last_mid())
     # print(db.make_result(0, messages={"s": "a"}))
 
-    # module_test()
+    module_test()
     # MiniTest()
-    friend_test()
+    # friend_test()
+    # base64_username_test()
